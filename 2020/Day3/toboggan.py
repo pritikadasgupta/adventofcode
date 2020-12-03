@@ -2,7 +2,6 @@
 
 import os
 
-# How many passwords are valid according to their policies?
 def tobaggan(ar,right,down):
 	#start at top-left corner
 	idx=0
