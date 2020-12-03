@@ -25,7 +25,3 @@ tobaggan(ar,3,1)
 
 #part 2
 tobaggan(ar,1,1)*tobaggan(ar,3,1)*tobaggan(ar,5,1)*tobaggan(ar,7,1)*tobaggan(ar,1,2)
-
-78*262*66*69*30
-
-#2698900776
