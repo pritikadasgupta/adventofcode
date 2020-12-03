@@ -11,3 +11,4 @@ You can learn more about this here: https://adventofcode.com/
 | -------------------------------------------------------------------------------- | :----: |
 | Day 01: [Day 1: Report Repair](https://adventofcode.com/2020/day/1)              |  \*\*  |
 | Day 02: [Day 2: Password Philosophy](https://adventofcode.com/2020/day/2)              |  \*\*  |
+| Day 03: [Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)              |  \*\*  |
