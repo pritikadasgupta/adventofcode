@@ -1,17 +1,8 @@
-#-------------------
-#clear workspace
-rm(list = ls())
-
 #Libraries
 library(tidyverse)
 
-#Set working directory
-path <- "~/Documents/adventofcode1/adventofcode/2020/Day2"
-setwd(path)
-
 #Load In Data
-file <- "exercise2.input.txt"
-df <- read.table(file, header = FALSE, sep = " ")
+df <- read.table(file("stdin"), header = FALSE, sep = " ")
 
 #-------------------
 #Clean up dataframe
