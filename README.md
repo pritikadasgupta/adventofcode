@@ -10,5 +10,6 @@ You can learn more about this here: https://adventofcode.com/
 | Challenge                                                                        | Status |
 | -------------------------------------------------------------------------------- | :----: |
 | Day 01: [Day 1: Report Repair](https://adventofcode.com/2020/day/1)              |  \*\*  |
-| Day 02: [Day 2: Password Philosophy](https://adventofcode.com/2020/day/2)              |  \*\*  |
-| Day 03: [Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)              |  \*\*  |
+| Day 02: [Day 2: Password Philosophy](https://adventofcode.com/2020/day/2)  |  \*\*  |
+| Day 03: [Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)    |  \*\*  |
+| Day 04: [Day 4: Passport Processing](https://adventofcode.com/2020/day/4)    |  \*\*  |
