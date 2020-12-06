@@ -1,6 +1,4 @@
-#-------------------
-#clear workspace
-rm(list = ls())
+#!/usr/bin/env Rscript
 
 #Libraries
 library(tidyverse)
@@ -62,7 +60,7 @@ for (x in data1) {
 
 #Part 1: Highest seat ID
 part1 <- max(8*row_+column_) #multiply the row by 8, then add the column
-
+print(part1)
 #Part 2:
 
 #IDs that I have
@@ -73,4 +71,4 @@ listIDs <- sort(listIDs)
 allIDs <- seq(listIDs[1],listIDs[length(listIDs)])
 
 #Which ID is mine?
-setdiff(allIDs,listIDs)
+print(setdiff(allIDs,listIDs))

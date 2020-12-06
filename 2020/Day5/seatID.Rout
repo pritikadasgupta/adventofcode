@@ -1,0 +1,76 @@
+
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> #!/usr/bin/env Rscript
+> 
+> #Libraries
+> library(tidyverse)
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+✔ ggplot2 3.3.2     ✔ purrr   0.3.4
+✔ tibble  3.0.3     ✔ dplyr   1.0.2
+✔ tidyr   1.1.2     ✔ stringr 1.4.0
+✔ readr   1.3.1     ✔ forcats 0.5.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+> 
+> #Set working directory and load In Data
+> # set(wd)
+> data1 <- readLines(file("stdin")) #read in file
+> 
+> #-------------------
+> #PART 1
+> #-------------------
+> 
+> #FUNCTIONS FOR EACH LETTER
+> charF <-function(x){ #take the lower half
++   return(c(x[1],
++            ((x[2]-x[1]-1)/2) + x[1]
++            ))
++ }
+> 
+> charB <-function(x){ #take the upper half
++   return(c(((x[2]-x[1]+1)/2) + x[1],
++            x[2]))
++ }
+> 
+> charL <- charF #take the lower half
+> charR <- charB #take the upper half
+> 
+> row_ <- vector()
+> column_ <- vector()
+> 
+> for (x in data1) {
++   rowVector <- c(0,127)
++   colVector <- c(0,7)
++   xsplit <- strsplit(x,"")[[1]]
++   for (y in xsplit){
++     if(y=="F"){
++       rowVector <- charF(rowVector)
++     }else if(y=="B"){
++       rowVector <- charB(rowVector)
++     }else if(y=="L"){
++       colVector <- charL(colVector)
++     }else if(y=="R"){
++       colVector <- charR(colVector)
++     }
++   }
++   
++   if(xsplit[7]=="F"){
++     row_ <- append(row_,rowVector[1])

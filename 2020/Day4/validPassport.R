@@ -1,6 +1,4 @@
-#-------------------
-#clear workspace
-rm(list = ls())
+#!/usr/bin/env Rscript
 
 #Libraries
 library(tidyverse)
