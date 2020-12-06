@@ -19,8 +19,8 @@ with open(os.environ['INPUT_PATH']) as ar_count:
 	ar = [x for x in ar_count.read().split()]
 
 #part 1
-tobaggan(ar,3,1)
+print("Part 1: ",tobaggan(ar,3,1))
 
 
 #part 2
-tobaggan(ar,1,1)*tobaggan(ar,3,1)*tobaggan(ar,5,1)*tobaggan(ar,7,1)*tobaggan(ar,1,2)
+print("Part 2: ",tobaggan(ar,1,1)*tobaggan(ar,3,1)*tobaggan(ar,5,1)*tobaggan(ar,7,1)*tobaggan(ar,1,2))
