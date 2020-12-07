@@ -25,4 +25,4 @@ def part2(bag):
 print("Part 1: ",sum(part1(bag) for bag in bags) - 1)
 
 #part 2
-print("Part 1: ",part2("shiny gold") - 1)
+print("Part 2: ",part2("shiny gold") - 1)
