@@ -55,76 +55,77 @@ df <- as.data.frame(cbind(bags,to_bag_num,to_bag))
 #-------------------------------------------------------------------------
 # How many bag colors can eventually contain at least one shiny gold bag?
 
-mat <- as.matrix(df)
-
-net1<-graph.data.frame(mat, directed=F)
-# V(net1) #prints the list of vertices (bags)
-# E(net1) #prints the list of edges (relationships)
-# degree(net1) #print the number of edges per vertex (relationships per bag)
-# V(net1)$color<-ifelse(V(net1)$name=='shiny gold',"gold","black") 
+# mat <- as.matrix(df)
 # 
-# for(j in 1:length(E(net1)$weight)){
-#   E(net1)$weight[j] <- df$to_bag_num[j]
+# net1<-graph.data.frame(mat, directed=F)
+# 
+# #delete all bags which have a 0 relationship with another bag
+# mat_nozeros <- as.matrix(df[which(df$to_bag_num!=0),c(1,3)])
+# net2<-graph.data.frame(mat_nozeros, directed=F)
+# plot(net2)
+# 
+# df_nozeros<- df[which(df$to_bag_num!=0),]
+# unique_bags <- unique(c(df_nozeros$bags,df_nozeros$to_bag))
+# 
+# df_nodes <- as.data.frame(cbind(seq(1,length(unique_bags)),unique_bags))
+# colnames(df_nodes) <- c("Id","Label")
+# 
+# write.csv(df_nodes, "nodes.csv",row.names=FALSE) #the nodes file tells Gephi all the possible nodes in a network
+# 
+# df_edges <- df_nozeros[,c(1,2,3)]
+# df_edges$Type = "Directed"
+# df_edges$Source = ""
+# df_edges$Target = ""
+# df_edges$Weight = df_edges$to_bag_num
+# 
+# for(k in 1:nrow(df_edges)){
+#   df_edges$Source[k] <- df_nodes$Id[which(df_nodes$Label==df_edges$bags[k])]
+#   df_edges$Target[k] <- df_nodes$Id[which(df_nodes$Label==df_edges$to_bag[k])]
 # }
 # 
-# plot(net1, edge.arrow.size=.5, vertex.label.color="black", vertex.label.dist=1.5,
-# vertex.color=c( "pink", "gold")[1+(V(net1)$color=="gold")] ) 
-# 
-# plot(net1, vertex.size=0, vertex.label=NA, edge.arrow.size=0 )
-# 
-# plot(net1, layout=layout_randomly)
+# df_edges <- df_edges[,c(4,5,6,7)]
+# write.csv(df_edges, "edges.csv",row.names=FALSE)
 
-#delete all bags which have a 0 relationship with another bag
-mat_nozeros <- as.matrix(df[which(df$to_bag_num!=0),c(1,3)])
-net2<-graph.data.frame(mat_nozeros, directed=F)
-plot(net2)
+net3 <- graph_from_edgelist(as.matrix(df[,c(1,3)]), directed = TRUE)
+# tkplot(net3)
 
-# 
-# 
-# unique_list_bags <- unique(df$bags)
-# for(bag in unique_list_bags){
-#   # which(df$to_bag==bag)
-#   which(df$bags==bag)
-#   
-#   
-#   
-# }
+list_bags <- all_simple_paths(net3, "shiny gold", to = V(net3),mode="in")
+vector_bags <- unique(unlist(list_bags))
 
+#PART 1 ANSWER:
+part1 <- length(vector_bags)-1
+print(paste("Part 1:",part1))
 
-df_nozeros<- df[which(df$to_bag_num!=0),]
-unique_bags <- unique(c(df_nozeros$bags,df_nozeros$to_bag))
+#-------------------------------------------------------------------------
+#Part 2:
+#-------------------------------------------------------------------------
+# How many individual bags are required inside your single shiny gold bag?
 
-df_nodes <- as.data.frame(cbind(seq(1,length(unique_bags)),unique_bags))
-colnames(df_nodes) <- c("Id","Label")
+all_paths <- all_simple_paths(net3, "shiny gold", to = V(net3),mode="out")
 
-write.csv(df_nodes, "nodes.csv",row.names=FALSE) #the nodes file tells Gephi all the possible nodes in a network
-
-df_edges <- df_nozeros[,c(1,2,3)]
-df_edges$Type = "Directed"
-df_edges$Source = ""
-df_edges$Target = ""
-df_edges$Weight = df_edges$to_bag_num
-
-for(k in 1:nrow(df_edges)){
-  df_edges$Source[k] <- df_nodes$Id[which(df_nodes$Label==df_edges$bags[k])]
-  df_edges$Target[k] <- df_nodes$Id[which(df_nodes$Label==df_edges$to_bag[k])]
+counts <- vector()
+for(i in 1:length(all_paths)){
+  counts <- append(counts,length(all_paths[[i]]))
 }
 
-df_edges <- df_edges[,c(4,5,6,7)]
-write.csv(df_edges, "edges.csv",row.names=FALSE)
-
-retrieve_bag <- function(bag){
-  for (x in 1:length(data)) {
-    data_container <- data[which(data[,3]==bag),]
-    newbag <- data_container[1,1]
-    bag_count = bag_count+nrow(data_container)
-    retrieve_bag(newbag)
-  }
+longest_counts <- which(counts == max(counts))
+longest_paths <- vector()
+for(j in 1:length(longest_counts)){
+  longest_paths <- append(longest_paths,all_paths[j])
 }
 
-retrieve("shiny gold")
+thepath <-longest_paths[[length(longest_paths)]]
 
+thepath_count <- vector()
+for(k in 2:length(thepath)){
+  color <- thepath[k]$name
+  prevcolor <-thepath[k-1]$name 
+  
+  newdf <- subset(df, bags==prevcolor & to_bag==color)
+  thepath_count <- append(thepath_count,as.numeric(newdf$to_bag_num[1]))
+}
 
+sum(thepath_count)
 
 
 
