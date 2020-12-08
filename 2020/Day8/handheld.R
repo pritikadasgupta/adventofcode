@@ -6,9 +6,9 @@ rm(list = ls())
 # library(igraph)
 
 #Set working directory and load in data
-data1 <- readLines(file("stdin")) #read in file
-# setwd("~/Documents/adventofcode1/adventofcode/2020/Day8")
-# data1 <- readLines("exercise8.input.txt") #read in file
+# data1 <- readLines(file("stdin")) #read in file
+setwd("~/Documents/adventofcode1/adventofcode/2020/Day8")
+data1 <- readLines("exercise8.input.txt") #read in file
 
 #-------------------------------------------------------------------------
 #Clean up data
@@ -76,7 +76,7 @@ print(paste("Part 1:",accumulator))
 
 idx_nopjmp <- which(dat$operation=="nop" | dat$operation=="jmp")
 j_vector <- vector()
-for(k in 124:length(idx_nopjmp)){
+for(k in 1:length(idx_nopjmp)){
   j <- idx_nopjmp[k]
   newdat <- dat
   if(newdat$operation[j]=="nop"){
@@ -125,11 +125,9 @@ for(k in 124:length(idx_nopjmp)){
   
 }
 
-#------
-k=setdiff(idx_nopjmp,j_vector)
-#-------
 
-j <- idx_nopjmp[123]
+
+j <- idx_nopjmp[k]
 newdat <- dat
 if(newdat$operation[j]=="nop"){
   newdat$operation[j]="jmp"
