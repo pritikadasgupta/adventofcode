@@ -1,14 +1,12 @@
 #!/usr/bin/env Rscript
 #clear workspace
-rm(list = ls())
+# rm(list = ls())
 #Libraries
 library(tidyverse)
 library(igraph)
 
 #Set working directory and load in data
-# data1 <- readLines(file("stdin")) #read in file
-setwd("~/Documents/adventofcode1/adventofcode/2020/Day7")
-data1 <- readLines("exercise7.input.txt") #read in file
+data1 <- readLines(file("stdin")) #read in file
 
 #-------------------------------------------------------------------------
 #Clean up data and make an edge list with weights for the rules
