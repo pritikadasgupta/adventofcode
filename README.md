@@ -18,3 +18,4 @@ You can learn more about this here: https://adventofcode.com/
 | Day 07: [Day 7: Handy Haversacks](https://adventofcode.com/2020/day/7)    |  \*\*  |
 | Day 08: [Day 8: Handheld Halting](https://adventofcode.com/2020/day/8)    |  \*\*  |
 | Day 09: [Day 9: Encoding Error](https://adventofcode.com/2020/day/9)    |  \*\*  |
+| Day 10: [Day 10: Adapter Array](https://adventofcode.com/2020/day/10)    |  \*\*  |
