@@ -9,7 +9,7 @@ rm(list = ls())
 #Set working directory and load in data
 # data1 <- as.numeric(readLines(file("stdin"))) #read in file
 setwd("~/Documents/adventofcode1/adventofcode/2020/Day11")
-data1 <- readLines("exercise11.input.txt") #read in file
+data1 <- readLines("exercise11.testinput.txt") #read in file
 
 
 #Functions
@@ -25,7 +25,7 @@ main_layout_switcher <- function(seatnum,mylist,rownum){
   if(mylist[[rownum]][seatnum]=="L"){
     
     if(adjacency(seatnum,mylist,rownum)==0){
-      mylist[[rownum]][seatnum]="#"
+      # mylist[[rownum]][seatnum]="#"
       return("#")
     }else{
       return("L")
@@ -34,12 +34,9 @@ main_layout_switcher <- function(seatnum,mylist,rownum){
   }else if(mylist[[rownum]][seatnum]=="#"){
     
     if(adjacency(seatnum,mylist,rownum)>=4){
-      mylist[[rownum]][seatnum]="L"
-      print(adjacency(seatnum,mylist,rownum))
+      # mylist[[rownum]][seatnum]="L"
       return("L")
     }else if(adjacency(seatnum,mylist,rownum)<4){
-      return("#")
-    }else{
       return("#")
     }
     
@@ -50,14 +47,14 @@ main_layout_switcher <- function(seatnum,mylist,rownum){
 
 
 adjacency <- function(seatnum,mylist,rownum){
-  # pos1 <- 0 #left
-  # pos2 <- 0 #right
-  # pos3 <- 0 #above left
-  # pos4 <- 0 #above 
-  # pos5 <- 0 #above right
-  # pos6 <- 0 #below left
-  # pos7 <- 0 #below
-  # pos8 <- 0 #below right
+  pos1 <- NA
+  pos2 <- NA
+  pos3 <- NA
+  pos4 <- NA
+  pos5 <- NA
+  pos6 <- NA
+  pos7 <- NA
+  pos8 <- NA
   
   #top row, left
   if(rownum==1 && seatnum==1){
@@ -70,11 +67,15 @@ adjacency <- function(seatnum,mylist,rownum){
     pos7 <- ifelse(x7!="#",0,1)
     pos8 <- ifelse(x8!="#",0,1)
     
-    pos1 <- 0 #left
-    pos3 <- 0 #above left
-    pos4 <- 0 #above 
-    pos5 <- 0 #above right
-    pos6 <- 0 #below left
+    pos2 <- ifelse(x2==".",NA,pos2)
+    pos7 <- ifelse(x7==".",NA,pos7)
+    pos8 <- ifelse(x8==".",NA,pos8)
+    
+    pos1 <- NA #left
+    pos3 <- NA #above left
+    pos4 <- NA #above 
+    pos5 <- NA #above right
+    pos6 <- NA #below left
 
     
     
@@ -87,12 +88,16 @@ adjacency <- function(seatnum,mylist,rownum){
     pos1 <- ifelse(x1!="#",0,1)
     pos6 <- ifelse(x6!="#",0,1)
     pos7 <- ifelse(x7!="#",0,1)
+    
+    pos1 <- ifelse(x1==".",NA,pos1)
+    pos6 <- ifelse(x6==".",NA,pos6)
+    pos7 <- ifelse(x7==".",NA,pos7)
 
-    pos2 <- 0 #right
-    pos3 <- 0 #above left
-    pos4 <- 0 #above 
-    pos5 <- 0 #above right
-    pos8 <- 0 #below right
+    pos2 <- NA #right
+    pos3 <- NA #above left
+    pos4 <- NA #above 
+    pos5 <- NA #above right
+    pos8 <- NA #below right
     
   }else if(rownum==length(mylist) && seatnum==1){#bottom row, left
     
@@ -104,11 +109,15 @@ adjacency <- function(seatnum,mylist,rownum){
     pos5 <- ifelse(x5!="#",0,1)
     pos4 <- ifelse(x4!="#",0,1)
     
-    pos1 <- 0 #left
-    pos3 <- 0 #above left
-    pos6 <- 0 #below left
-    pos7 <- 0 #below
-    pos8 <- 0 #below right
+    pos2 <- ifelse(x2==".",NA,pos2)
+    pos5 <- ifelse(x5==".",NA,pos5)
+    pos4 <- ifelse(x4==".",NA,pos4)
+    
+    pos1 <- NA #left
+    pos3 <- NA #above left
+    pos6 <- NA #below left
+    pos7 <- NA #below
+    pos8 <- NA #below right
     
   }else if(rownum==length(mylist) && seatnum==length(mylist[[rownum]])){
     
@@ -120,11 +129,15 @@ adjacency <- function(seatnum,mylist,rownum){
     pos3 <- ifelse(x3!="#",0,1)
     pos4 <- ifelse(x4!="#",0,1)
     
-    pos2 <- 0 #right
-    pos5 <- 0 #above right
-    pos6 <- 0 #below left
-    pos7 <- 0 #below
-    pos8 <- 0 #below right
+    pos1 <- ifelse(x1==".",NA,pos1)
+    pos3 <- ifelse(x3==".",NA,pos3)
+    pos4 <- ifelse(x4==".",NA,pos4)
+    
+    pos2 <- NA #right
+    pos5 <- NA #above right
+    pos6 <- NA #below left
+    pos7 <- NA #below
+    pos8 <- NA #below right
     
   }else if(seatnum==1){#left
     
@@ -140,9 +153,15 @@ adjacency <- function(seatnum,mylist,rownum){
     pos8 <- ifelse(x8!="#",0,1)
     pos7 <- ifelse(x7!="#",0,1)
     
-    pos1 <- 0 #left
-    pos3 <- 0 #above left
-    pos6 <- 0 #below left
+    pos2 <- ifelse(x2==".",NA,pos2)
+    pos4 <- ifelse(x4==".",NA,pos4)
+    pos5 <- ifelse(x5==".",NA,pos5)
+    pos7 <- ifelse(x7==".",NA,pos7)
+    pos8 <- ifelse(x8==".",NA,pos8)
+    
+    pos1 <- NA #left
+    pos3 <- NA #above left
+    pos6 <- NA #below left
     
   }else if(seatnum==length(mylist[[rownum]])){ #right
     
@@ -158,10 +177,16 @@ adjacency <- function(seatnum,mylist,rownum){
     pos6 <- ifelse(x6!="#",0,1)
     pos7 <- ifelse(x7!="#",0,1)
     
+    pos1 <- ifelse(x1==".",NA,pos1)
+    pos3 <- ifelse(x3==".",NA,pos3)
+    pos4 <- ifelse(x4==".",NA,pos4)
+    pos6 <- ifelse(x6==".",NA,pos6)
+    pos7 <- ifelse(x7==".",NA,pos7)
+    
    
-    pos2 <- 0 #right
-    pos5 <- 0 #above right
-    pos8 <- 0 #below right
+    pos2 <- NA #right
+    pos5 <- NA #above right
+    pos8 <- NA #below right
     
   }else if(rownum==1){ #top
     
@@ -177,9 +202,15 @@ adjacency <- function(seatnum,mylist,rownum){
     pos7 <- ifelse(x7!="#",0,1)
     pos8 <- ifelse(x8!="#",0,1)
     
-    pos3 <- 0
-    pos4 <- 0
-    pos5 <- 0
+    pos1 <- ifelse(x1==".",NA,pos1)
+    pos2 <- ifelse(x2==".",NA,pos2)
+    pos6 <- ifelse(x6==".",NA,pos6)
+    pos7 <- ifelse(x7==".",NA,pos7)
+    pos8 <- ifelse(x8==".",NA,pos8)
+    
+    pos3 <- NA
+    pos4 <- NA
+    pos5 <- NA
     
   }else if(rownum==length(mylist)){ #bottom
     
@@ -196,9 +227,15 @@ adjacency <- function(seatnum,mylist,rownum){
     pos4 <- ifelse(x4!="#",0,1)
     pos5 <- ifelse(x5!="#",0,1)
     
-    pos6 <- 0
-    pos7 <- 0
-    pos8 <- 0
+    pos1 <- ifelse(x1==".",NA,pos1)
+    pos2 <- ifelse(x2==".",NA,pos2)
+    pos3 <- ifelse(x3==".",NA,pos3)
+    pos4 <- ifelse(x4==".",NA,pos4)
+    pos5 <- ifelse(x5==".",NA,pos5)
+    
+    pos6 <- NA
+    pos7 <- NA
+    pos8 <- NA
     
   }else{
     x1 <- mylist[[rownum]][seatnum-1]
@@ -219,6 +256,17 @@ adjacency <- function(seatnum,mylist,rownum){
     pos6 <- ifelse(x6!="#",0,1)
     pos7 <- ifelse(x7!="#",0,1)
     pos8 <- ifelse(x8!="#",0,1)
+    
+    pos1 <- ifelse(x1==".",NA,pos1)
+    pos2 <- ifelse(x2==".",NA,pos2)
+    pos3 <- ifelse(x3==".",NA,pos3)
+    pos4 <- ifelse(x4==".",NA,pos4)
+    pos5 <- ifelse(x5==".",NA,pos5)
+    pos6 <- ifelse(x6==".",NA,pos6)
+    pos7 <- ifelse(x7==".",NA,pos7)
+    pos8 <- ifelse(x8==".",NA,pos8)
+
+    
   }
   
   
@@ -257,34 +305,22 @@ for(k in 1:length(data1)){
 #-------------------------------------------------------------------------
 #PART 1
 #-------------------------------------------------------------------------
-counts <- vector()
+countsv <- vector()
 
 #1st round
 count2 = count_occ(cur_seatnum_layout)
 nextlist <- switch_layout(cur_seatnum_layout)
 listswitches = 1
 
-# #second rounds
-# count2 = count_occ(nextlist)
-# nextlist <- switch_layout(nextlist)
-# 
-# count3 = count_occ(nextlist)
-# nextlist <- switch_layout(nextlist)
-# 
-# 
-# count4 = count_occ(nextlist)
-# nextlist <- switch_layout(nextlist)
-# 
-# 
-# count5 = count_occ(nextlist)
-# nextlist <- switch_layout(nextlist)
-
-while(listswitches<100){
+while(listswitches<15){
   count1 = count2
-  counts <- append(counts,count1)
+  countsv <- append(countsv,count1)
   nextlist <- switch_layout(nextlist)
   count2 = count_occ(nextlist)
   listswitches = listswitches+1
+  print(nextlist)
 }
 
-counts
+#part 1 soln
+countsv[length(countsv)]
+countsv
