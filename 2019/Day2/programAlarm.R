@@ -48,8 +48,8 @@ opcode_99 <- function(x,i){
 #Clean up data
 #-------------------------------------------------------------------------
 # data2 <- as.numeric(strsplit(data1,",")[[1]])
-data2 <- as.numeric(strsplit(data1,",")[[1]])
-
+main_data <- as.numeric(strsplit(data1,",")[[1]])
+data2 <- main_data
 value <- vector()
 position <- vector()
 
@@ -94,18 +94,21 @@ print(paste("Part 1:",data2[1]))
 # you need to determine what pair of inputs produces the output 19690720."
 
 gravity <- function(input1,input2,data2){
+  data2 <- main_data
   data2[2]<- input1
   data2[3]<- input2
+  value <- vector()
+  position <- vector()
   
   for(i in seq(1,length(data2),by=4)){
     if(data2[i]==1){
       value <- append(value,opcode_1(data2,i))
       position <- append(position,data2[i+3]+1)
-      data2[position] <- value
+      data2[data2[i+3]+1] <- opcode_1(data2,i)
     }else if(data2[i]==2){
       value <- append(value,opcode_2(data2,i))
       position <- append(position,data2[i+3]+1)
-      data2[position] <- value
+      data2[data2[i+3]+1] <- opcode_2(data2,i)
     }else if(data2[i]==99){
       value <- append(value,0)
       position <- append(position,0)
@@ -120,10 +123,12 @@ gravity <- function(input1,input2,data2){
 
 for(a in 1:100){
   for(b in 1:100){
-    if(gravity(a,b,data2)==19690720){
+    check_num <- gravity(a,b,data2)
+    if(check_num==19690720){
       print(a)
       print(b)
-      print(100*a*b)
+      part2 <- 100*(a)+(b)
+      print(paste("Part 2:",part2))
       break
     }
   }
