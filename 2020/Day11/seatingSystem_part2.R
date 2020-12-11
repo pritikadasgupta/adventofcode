@@ -15,7 +15,7 @@ data1 <- readLines("exercise11.input.txt") #read in file
 # If a seatnum is empty (L) and there are no occupied seatnums adjacent to it, 
 # the seatnum becomes occupied.
 
-# If a seatnum is occupied (#) and four or more seatnums adjacent to it are also occupied, 
+# If a seatnum is occupied (#) and FIVE or more seatnums adjacent to it are also occupied, 
 # the seatnum becomes empty.
 
 # Otherwise, the seatnum's state does not change.
@@ -33,9 +33,9 @@ main_layout_switcher <- function(seatnum,mylist,rownum){
     
   }else if(mylist[[rownum]][seatnum]=="#"){
     the_adjacency <- adjacency(seatnum,mylist,rownum)
-    if(the_adjacency>=4){
+    if(the_adjacency>=5){
       return("L")
-    }else if(the_adjacency<4){
+    }else if(the_adjacency<5){
       return("#")
     }
     
@@ -65,11 +65,11 @@ adjacency <- function(seatnum,mylist,rownum){
   pos8 <- NA
   
   #top row, left
-  if(rownum==1 && seatnum==1){
+  if(rownum<=2 && seatnum<=2){
     
-    x2 <- mylist[[rownum]][seatnum+1]
-    x7 <- mylist[[rownum+1]][seatnum]
-    x8 <- mylist[[rownum+1]][seatnum+1]
+    x2 <- mylist[[rownum]][seatnum+1+1]
+    x7 <- mylist[[rownum+1+1]][seatnum]
+    x8 <- mylist[[rownum+1+1]][seatnum+1+1]
     
     pos2 <- position_value(x2)
     pos7 <- position_value(x7)
@@ -84,11 +84,11 @@ adjacency <- function(seatnum,mylist,rownum){
 
     
     
-  }else if(rownum==1 && seatnum==length(mylist[[rownum]])){#top row, right
+  }else if(rownum<=2 && seatnum<=length(mylist[[rownum]])){#top row, right
     
-    x1 <- mylist[[rownum]][seatnum-1]
-    x6 <- mylist[[rownum+1]][seatnum-1]
-    x7 <- mylist[[rownum+1]][seatnum]
+    x1 <- mylist[[rownum]][seatnum-1-1]
+    x6 <- mylist[[rownum+1+1]][seatnum-1-1]
+    x7 <- mylist[[rownum+1+1]][seatnum]
     
     pos1 <- position_value(x1)
     pos6 <- position_value(x6)
@@ -100,11 +100,11 @@ adjacency <- function(seatnum,mylist,rownum){
     pos5 <- NA #above right
     pos8 <- NA #below right
     
-  }else if(rownum==length(mylist) && seatnum==1){#bottom row, left
+  }else if(rownum<=length(mylist) && seatnum<=2){#bottom row, left
     
-    x2 <- mylist[[rownum]][seatnum+1]
-    x4 <- mylist[[rownum-1]][seatnum]
-    x5 <- mylist[[rownum-1]][seatnum+1]
+    x2 <- mylist[[rownum]][seatnum+1+1]
+    x4 <- mylist[[rownum-1-1]][seatnum]
+    x5 <- mylist[[rownum-1-1]][seatnum+1+1]
     
     pos2 <- position_value(x2)
     pos5 <- position_value(x5)
@@ -116,11 +116,11 @@ adjacency <- function(seatnum,mylist,rownum){
     pos7 <- NA #below
     pos8 <- NA #below right
     
-  }else if(rownum==length(mylist) && seatnum==length(mylist[[rownum]])){ #bottom row, right
+  }else if(rownum<=length(mylist) && seatnum<=length(mylist[[rownum]])){ #bottom row, right
     
-    x1 <- mylist[[rownum]][seatnum-1]
-    x3 <- mylist[[rownum-1]][seatnum-1]
-    x4 <- mylist[[rownum-1]][seatnum]
+    x1 <- mylist[[rownum]][seatnum-1-1]
+    x3 <- mylist[[rownum-1-1]][seatnum-1-1]
+    x4 <- mylist[[rownum-1-1]][seatnum]
     
     pos1 <- position_value(x1)
     pos3 <- position_value(x3)
@@ -132,13 +132,13 @@ adjacency <- function(seatnum,mylist,rownum){
     pos7 <- NA #below
     pos8 <- NA #below right
     
-  }else if(seatnum==1){#left
+  }else if(seatnum==2){#left
     
-    x2 <- mylist[[rownum]][seatnum+1]
-    x4 <- mylist[[rownum-1]][seatnum]
-    x5 <- mylist[[rownum-1]][seatnum+1]
-    x7 <- mylist[[rownum+1]][seatnum]
-    x8 <- mylist[[rownum+1]][seatnum+1]
+    x2 <- mylist[[rownum]][seatnum+1+1]
+    x4 <- mylist[[rownum-1-1]][seatnum]
+    x5 <- mylist[[rownum-1-1]][seatnum+1+1]
+    x7 <- mylist[[rownum+1+1]][seatnum]
+    x8 <- mylist[[rownum+1+1]][seatnum+1+1]
     
     pos2 <- position_value(x2)
     pos4 <- position_value(x4)
@@ -152,11 +152,11 @@ adjacency <- function(seatnum,mylist,rownum){
     
   }else if(seatnum==length(mylist[[rownum]])){ #right
     
-    x1 <- mylist[[rownum]][seatnum-1]
-    x3 <- mylist[[rownum-1]][seatnum-1]
-    x4 <- mylist[[rownum-1]][seatnum]
-    x6 <- mylist[[rownum+1]][seatnum-1]
-    x7 <- mylist[[rownum+1]][seatnum]
+    x1 <- mylist[[rownum]][seatnum-1-1]
+    x3 <- mylist[[rownum-1-1]][seatnum-1-1]
+    x4 <- mylist[[rownum-1-1]][seatnum]
+    x6 <- mylist[[rownum+1+1]][seatnum-1-1]
+    x7 <- mylist[[rownum+1+1]][seatnum]
     
     pos1 <- position_value(x1)
     pos3 <- position_value(x3)
@@ -171,11 +171,11 @@ adjacency <- function(seatnum,mylist,rownum){
     
   }else if(rownum==1){ #top
     
-    x1 <- mylist[[rownum]][seatnum-1]
-    x2 <- mylist[[rownum]][seatnum+1]
-    x6 <- mylist[[rownum+1]][seatnum-1]
-    x7 <- mylist[[rownum+1]][seatnum]
-    x8 <- mylist[[rownum+1]][seatnum+1]
+    x1 <- mylist[[rownum]][seatnum-1-1]
+    x2 <- mylist[[rownum]][seatnum+1+1]
+    x6 <- mylist[[rownum+1+1]][seatnum-1-1]
+    x7 <- mylist[[rownum+1+1]][seatnum]
+    x8 <- mylist[[rownum+1+1]][seatnum+1+1]
     
     pos1 <- position_value(x1)
     pos2 <- position_value(x2)
@@ -189,11 +189,11 @@ adjacency <- function(seatnum,mylist,rownum){
     
   }else if(rownum==length(mylist)){ #bottom
     
-    x1 <- mylist[[rownum]][seatnum-1]
-    x2 <- mylist[[rownum]][seatnum+1]
-    x3 <- mylist[[rownum-1]][seatnum-1]
-    x4 <- mylist[[rownum-1]][seatnum]
-    x5 <- mylist[[rownum-1]][seatnum+1]
+    x1 <- mylist[[rownum]][seatnum-1-1]
+    x2 <- mylist[[rownum]][seatnum+1+1]
+    x3 <- mylist[[rownum-1-1]][seatnum-1-1]
+    x4 <- mylist[[rownum-1-1]][seatnum]
+    x5 <- mylist[[rownum-1-1]][seatnum+1+1]
     
     
     pos1 <- position_value(x1)
@@ -208,14 +208,14 @@ adjacency <- function(seatnum,mylist,rownum){
     
     
   }else{
-    x1 <- mylist[[rownum]][seatnum-1]
-    x2 <- mylist[[rownum]][seatnum+1]
-    x3 <- mylist[[rownum-1]][seatnum-1]
-    x4 <- mylist[[rownum-1]][seatnum]
-    x5 <- mylist[[rownum-1]][seatnum+1]
-    x6 <- mylist[[rownum+1]][seatnum-1]
-    x7 <- mylist[[rownum+1]][seatnum]
-    x8 <- mylist[[rownum+1]][seatnum+1]
+    x1 <- mylist[[rownum]][seatnum-1-1]
+    x2 <- mylist[[rownum]][seatnum+1+1]
+    x3 <- mylist[[rownum-1-1]][seatnum-1-1]
+    x4 <- mylist[[rownum-1-1]][seatnum]
+    x5 <- mylist[[rownum-1-1]][seatnum+1+1]
+    x6 <- mylist[[rownum+1+1]][seatnum-1-1]
+    x7 <- mylist[[rownum+1+1]][seatnum]
+    x8 <- mylist[[rownum+1+1]][seatnum+1+1]
     
     
     pos1 <- position_value(x1)
@@ -274,7 +274,7 @@ for(k in 1:length(data1)){
 }
 
 #-------------------------------------------------------------------------
-#PART 1
+#PART 2
 #-------------------------------------------------------------------------
 countsv <- vector()
 
@@ -295,5 +295,5 @@ while((count2-count1)!=0){
 }
 
 #part 1 soln:
-print(paste("Part 1:",countsv[length(countsv)]))
+print(paste("Part 2:",countsv[length(countsv)]))
 
