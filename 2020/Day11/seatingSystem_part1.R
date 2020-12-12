@@ -4,9 +4,7 @@
 rm(list = ls())
 
 #Set working directory and load in data
-# data1 <- as.numeric(readLines(file("stdin"))) #read in file
-setwd("~/Documents/adventofcode1/adventofcode/2020/Day11")
-data1 <- readLines("exercise11.input.txt") #read in file
+data1 <- as.numeric(readLines(file("stdin"))) #read in file
 
 
 #Functions

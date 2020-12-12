@@ -3,12 +3,8 @@
 #clear workspace
 rm(list = ls())
 
-
 #Set working directory and load in data
-# data1 <- as.numeric(readLines(file("stdin"))) #read in file
-setwd("~/Documents/adventofcode1/adventofcode/2020/Day11")
-data1 <- readLines("exercise11.input.txt") #read in file
-
+data1 <- as.numeric(readLines(file("stdin"))) #read in file
 
 #Functions
 #-------------------------------------------------------------------------
@@ -134,8 +130,8 @@ adjacency <- function(seatnum,mylist,rownum){
       x <- mylist[[rownum-1]][seatnum-1]
     }
     
-    seatnum <- seatnum+1
-    rownum <- rownum
+    seatnum <- seatnum-1
+    rownum <- rownum-1
     
     if(is_empty(x) || is.null(x) ||is.na(x)){
       times = length(mylist)
@@ -166,8 +162,8 @@ adjacency <- function(seatnum,mylist,rownum){
       x <- mylist[[rownum-1]][seatnum]
     }
     
-    seatnum <- seatnum+1
-    rownum <- rownum
+    seatnum <- seatnum
+    rownum <- rownum-1
     
     if(is_empty(x) || is.null(x) ||is.na(x)){
       times = length(mylist)
@@ -199,7 +195,7 @@ adjacency <- function(seatnum,mylist,rownum){
     }
     
     seatnum <- seatnum+1
-    rownum <- rownum
+    rownum <- rownum-1
     
     if(is_empty(x) || is.null(x) ||is.na(x)){
       times = length(mylist)
@@ -230,8 +226,8 @@ adjacency <- function(seatnum,mylist,rownum){
       x <- mylist[[rownum+1]][seatnum-1]
     }
     
-    seatnum <- seatnum+1
-    rownum <- rownum
+    seatnum <- seatnum-1
+    rownum <- rownum+1
     
     if(is_empty(x) || is.null(x) ||is.na(x)){
       times = length(mylist)
@@ -262,8 +258,8 @@ adjacency <- function(seatnum,mylist,rownum){
       x <- mylist[[rownum+1]][seatnum]
     }
     
-    seatnum <- seatnum+1
-    rownum <- rownum
+    seatnum <- seatnum
+    rownum <- rownum+1
     
     if(is_empty(x) || is.null(x) ||is.na(x)){
       times = length(mylist)
@@ -294,7 +290,7 @@ adjacency <- function(seatnum,mylist,rownum){
     }
     
     seatnum <- seatnum+1
-    rownum <- rownum
+    rownum <- rownum+1
     
     if(is_empty(x) || is.null(x) ||is.na(x)){
       times = length(mylist)
@@ -359,16 +355,9 @@ for(k in 1:length(data1)){
 #PART 2
 #-------------------------------------------------------------------------
 countsv <- vector()
-
 #1st round
 count1 = count_occ(cur_seatnum_layout)
 nextlist <- switch_layout(cur_seatnum_layout)
-
-# mylist <- nextlist
-mylist <- cur_seatnum_layout
-rownum=1
-seatnum=1
-
 count2 = count_occ(nextlist)
 listswitches = 1
 
@@ -380,5 +369,6 @@ while((count2-count1)!=0){
   listswitches = listswitches+1
 }
 
+listswitches
 print(paste("Part 2:",countsv[length(countsv)])) #part 2 soln
 
