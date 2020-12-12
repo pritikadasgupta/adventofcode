@@ -54,7 +54,7 @@ position_value <- function(x){
   }
 }
 
-adjacency <- function(seatnum,mylist,rownum){
+adjacency1 <- function(seatnum,mylist,rownum){
   pos1 <- NA
   pos2 <- NA
   pos3 <- NA
