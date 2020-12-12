@@ -92,13 +92,17 @@ x_=-1 #start in the east
 y_=0  #start in the east
 end_result <- update(as.character(df$directions[1]),as.numeric(df$values[1]),c=TRUE,x,y,x_,y_)
 print(end_result)
-for(j in 2:nrow(df)){
-  x=end_result[1]
-  y=end_result[2]
-  x_=end_result[3]
-  y_=end_result[4]
-  end_result <- update(as.character(df$directions[j]),as.numeric(df$values[j]),c=TRUE,x,y,x_,y_)
-  print(j,end_result)
+# for(j in 2:nrow(df)){
+for(j in 2:12){
+  x=as.numeric(end_result[1])
+  y=as.numeric(end_result[2])
+  x_=as.numeric(end_result[3])
+  y_=as.numeric(end_result[4])
+  a <- as.character(df$directions[j])
+  b <- as.numeric(df$values[j])
+  c=TRUE
+  end_result <- update(a,b,c=TRUE,x,y,x_,y_)
+  print(paste(j,end_result))
   }
 
 
