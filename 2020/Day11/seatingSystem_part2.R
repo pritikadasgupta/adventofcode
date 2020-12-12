@@ -54,30 +54,18 @@ position_value <- function(x){
 }
 
 adjacency <- function(seatnum,mylist,rownum){
-  pos1_value <- 0
-  pos2_value <- 0
-  pos3_value <- 0
-  pos4_value <- 0
-  pos5_value <- 0
-  pos6_value <- 0
-  pos7_value <- 0
-  pos8_value <- 0
-  
   rownum_perm <- rownum
   seatnum_perm <- seatnum
   times = 0
+  x=0
     #position1:
     while(times < length(mylist)){
-      
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum]][seatnum-1]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        print(paste(NA))
+      },finally = {    
+        print(paste(mylist[[rownum]][seatnum-1]))
       }
       )
       
@@ -87,13 +75,11 @@ adjacency <- function(seatnum,mylist,rownum){
       
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum]][seatnum-1]
-        message("Everything was fine.")
+        print(paste(mylist[[rownum]][seatnum-1]))
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        print(paste(NA))
+      },finally = {    
+        print(paste(mylist[[rownum]][seatnum-1]))
       }
       )
       
@@ -101,9 +87,12 @@ adjacency <- function(seatnum,mylist,rownum){
       
       if(is.na(pos1_value)){
         times=times+1
-      } else if(pos1_value=="#"){
-        pos1=pos1_value
+      } else if(x=="#"){
         times = length(mylist)
+        pos1=pos1_value
+      }else if(x=="L"){
+        times = length(mylist)
+        pos1=pos1_value
       }else{
         times = times+1
       }
@@ -112,18 +101,16 @@ adjacency <- function(seatnum,mylist,rownum){
   rownum <- rownum_perm
   seatnum <- seatnum_perm
   times = 0 
+  x=0
     #position2:
   while(times < length(mylist)){
-    
     x <- tryCatch(expr = {                      # Specifying expression
       mylist[[rownum]][seatnum+1]
-      message("Everything was fine.")
+      print(paste(mylist[[rownum]][seatnum+1]))
     },error = function(e){          # Specifying error message
-      message("There was an error message.")
-    },warning = function(w){        # Specifying warning message
-      message("There was a warning message.")
-    },finally = {                   # Specifying final message
-      message("tryCatch is finished.")
+      print(paste(NA))
+    },finally = {    
+      print(paste(mylist[[rownum]][seatnum+1]))
     }
     )
     pos2 <- position_value(x)
@@ -131,24 +118,22 @@ adjacency <- function(seatnum,mylist,rownum){
     
       rownum <- rownum
       seatnum <- seatnum+1
-      
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum]][seatnum+1]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        print(paste(NA))
+      },finally = {    
+        print(paste(mylist[[rownum]][seatnum+1]))
       }
       )
-      
       pos2_value <- position_value(x)
       
       if(is.na(pos2_value)){
         times=times+1
-      } else if(pos2_value=="#"){
+      } else if(x=="#"){
+        times = length(mylist)
+        pos2=pos2_value
+      }else if(x=="L"){
         times = length(mylist)
         pos2=pos2_value
       }else{
@@ -161,42 +146,54 @@ adjacency <- function(seatnum,mylist,rownum){
   rownum <- rownum_perm
   seatnum <- seatnum_perm
   times = 0
+  x=0
     #position3:
   while(times < length(mylist)){
     
+    
     x <- tryCatch(expr = {                      # Specifying expression
-        mylist[[rownum-1]][seatnum-1]
-        message("Everything was fine.")
-      },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
-      }
+      mylist[[rownum-1]][seatnum-1]
+    },error = function(e){          # Specifying error message
+      # message(paste(NA))
+    },finally = {    
+      message(paste("ok"))
+      
+    }
     )
     
-    # x <- tryCatch(mylist[[rownum-1]][seatnum-1],finally="hi")
+    if(is.null(x)){
+      x <- NULL
+    }else{
+      x <- mylist[[rownum-1]][seatnum-1]
+    }
+    
     pos3 <- position_value(x)
       seatnum <- seatnum-1
       rownum <- rownum-1
       
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum-1]][seatnum-1]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        # message(paste(NA))
+      },finally = {    
+        message(paste("ok"))
+        
       }
       )
+      
+      if(is.null(x)){
+        x <- NULL
+      }else{
+        x <- mylist[[rownum-1]][seatnum-1]
+      }
     
       pos3_value <- position_value(x)
       if(is.na(pos3_value)){
         times=times+1
-      } else if(pos3_value=="#"){
+      } else if(x=="#"){
+        times = length(mylist)
+        pos3=pos3_value
+      }else if(x=="L"){
         times = length(mylist)
         pos3=pos3_value
       }else{
@@ -212,36 +209,51 @@ adjacency <- function(seatnum,mylist,rownum){
   times=0
     #position4:
   while(times < length(mylist)){
+    
+  
     x <- tryCatch(expr = {                      # Specifying expression
       mylist[[rownum-1]][seatnum]
-      message("Everything was fine.")
     },error = function(e){          # Specifying error message
-      message("There was an error message.")
-    },warning = function(w){        # Specifying warning message
-      message("There was a warning message.")
-    },finally = {                   # Specifying final message
-      message("tryCatch is finished.")
+      # message(paste(NA))
+    },finally = {    
+      message(paste("ok"))
+      
     }
     )
+    
+    if(is.null(x)){
+      x <- NULL
+    }else{
+      x <- mylist[[rownum-1]][seatnum]
+    }
+    
+    
     pos4 <- position_value(x)
       seatnum <- seatnum
       rownum <- rownum-1
       
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum-1]][seatnum]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        # message(paste(NA))
+      },finally = {    
+        message(paste("ok"))
+        
       }
       )
+      
+      if(is.null(x)){
+        x <- NULL
+      }else{
+        x <- mylist[[rownum-1]][seatnum]
+      }
       pos4_value <- position_value(x)
       if(is.na(pos4_value)){
         times=times+1
-      } else if(pos4_value=="#"){
+      } else if(x=="#"){
+        times = length(mylist)
+        pos4=pos4_value
+      }else if(x=="L"){
         times = length(mylist)
         pos4=pos4_value
       }else{
@@ -260,33 +272,45 @@ adjacency <- function(seatnum,mylist,rownum){
     
     x <- tryCatch(expr = {                      # Specifying expression
       mylist[[rownum-1]][seatnum+1]
-      message("Everything was fine.")
     },error = function(e){          # Specifying error message
-      message("There was an error message.")
-    },warning = function(w){        # Specifying warning message
-      message("There was a warning message.")
-    },finally = {                   # Specifying final message
-      message("tryCatch is finished.")
+      # message(paste(NA))
+    },finally = {    
+      message(paste("ok"))
+      
     }
     )
+    
+    if(is.null(x)){
+      x <- NULL
+    }else{
+      x <- mylist[[rownum-1]][seatnum+1]
+    }
     pos5 <- position_value(x)
       seatnum <- seatnum+1
       rownum <- rownum-1
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum-1]][seatnum+1]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        # message(paste(NA))
+      },finally = {    
+        message(paste("ok"))
+        
       }
       )
+      
+      if(is.null(x)){
+        x <- NULL
+      }else{
+        x <- mylist[[rownum-1]][seatnum+1]
+      }
       pos5_value <- position_value(x)
+      
       if(is.na(pos5_value)){
         times=times+1
-      } else if(pos5_value=="#"){
+      } else if(x=="#"){
+        times = length(mylist)
+        pos5=pos5_value
+      }else if(x=="L"){
         times = length(mylist)
         pos5=pos5_value
       }else{
@@ -301,38 +325,51 @@ adjacency <- function(seatnum,mylist,rownum){
     #position6:
   while(times < length(mylist)){
     
+    
     x <- tryCatch(expr = {                      # Specifying expression
       mylist[[rownum+1]][seatnum-1]
-      message("Everything was fine.")
     },error = function(e){          # Specifying error message
-      message("There was an error message.")
-    },warning = function(w){        # Specifying warning message
-      message("There was a warning message.")
-    },finally = {                   # Specifying final message
-      message("tryCatch is finished.")
+      # message(paste(NA))
+    },finally = {    
+      message(paste("ok"))
+      
     }
     )
+    
+    if(is.null(x)){
+      x <- NULL
+    }else{
+      x <- mylist[[rownum+1]][seatnum-1]
+    }
     
     pos6 <- position_value(x)
       seatnum <- seatnum-1
       rownum <- rownum+1
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum+1]][seatnum-1]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        # message(paste(NA))
+      },finally = {    
+        message(paste("ok"))
+        
       }
       )
+      
+      if(is.null(x)){
+        x <- NULL
+      }else{
+        x <- mylist[[rownum+1]][seatnum-1]
+      }
+      
       pos6_value <- position_value(x)
       if(is.na(pos6_value)){
         times=times+1
-      } else if(pos6_value=="#"){
-        pos6 = pos6_value
+      } else if(x=="#"){
         times = length(mylist)
+        pos6=pos6_value
+      }else if(x=="L"){
+        times = length(mylist)
+        pos6=pos6_value
       }else{
         times = times+1
       }
@@ -345,36 +382,49 @@ adjacency <- function(seatnum,mylist,rownum){
   while(times < length(mylist)){
     x <- tryCatch(expr = {                      # Specifying expression
       mylist[[rownum+1]][seatnum]
-      message("Everything was fine.")
     },error = function(e){          # Specifying error message
-      message("There was an error message.")
-    },warning = function(w){        # Specifying warning message
-      message("There was a warning message.")
-    },finally = {                   # Specifying final message
-      message("tryCatch is finished.")
+      # message(paste(NA))
+    },finally = {    
+      message(paste("ok"))
+      
     }
     )
+    
+    if(is.null(x)){
+      x <- NULL
+    }else{
+      x <- mylist[[rownum+1]][seatnum]
+    }
+    
     
     pos7 <- position_value(x)
       seatnum <- seatnum
       rownum <- rownum+1
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum+1]][seatnum]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        # message(paste(NA))
+      },finally = {    
+        message(paste("ok"))
+        
       }
       )
+      
+      if(is.null(x)){
+        x <- NULL
+      }else{
+        x <- mylist[[rownum+1]][seatnum]
+      }
+      
       pos7_value <- position_value(x)
       if(is.na(pos7_value)){
         times=times+1
-      } else if(pos7_value=="#"){
-        pos7=pos7_value
+      } else if(x=="#"){
         times = length(mylist)
+        pos7=pos7_value
+      }else if(x=="L"){
+        times = length(mylist)
+        pos7=pos7_value
       }else{
         times = times+1
       }
@@ -387,35 +437,48 @@ adjacency <- function(seatnum,mylist,rownum){
   while(times < length(mylist)){
     x <- tryCatch(expr = {                      # Specifying expression
       mylist[[rownum+1]][seatnum+1]
-      message("Everything was fine.")
     },error = function(e){          # Specifying error message
-      message("There was an error message.")
-    },warning = function(w){        # Specifying warning message
-      message("There was a warning message.")
-    },finally = {                   # Specifying final message
-      message("tryCatch is finished.")
+      # message(paste(NA))
+    },finally = {    
+      message(paste("ok"))
+      
     }
     )
+    
+    if(is.null(x)){
+      x <- NULL
+    }else{
+      x <- mylist[[rownum+1]][seatnum+1]
+    }
+    
     pos8 <- position_value(x)
       seatnum <- seatnum+1
       rownum <- rownum+1
       x <- tryCatch(expr = {                      # Specifying expression
         mylist[[rownum+1]][seatnum+1]
-        message("Everything was fine.")
       },error = function(e){          # Specifying error message
-        message("There was an error message.")
-      },warning = function(w){        # Specifying warning message
-        message("There was a warning message.")
-      },finally = {                   # Specifying final message
-        message("tryCatch is finished.")
+        # message(paste(NA))
+      },finally = {    
+        message(paste("ok"))
+        
       }
       )
+      
+      if(is.null(x)){
+        x <- NULL
+      }else{
+        x <- mylist[[rownum+1]][seatnum+1]
+      }
+      
       pos8_value <- position_value(x)
       if(is.na(pos8_value)){
         times=times+1
-      } else if(pos8_value=="#"){
-        pos8=pos8_value
+      } else if(x=="#"){
         times = length(mylist)
+        pos8=pos8_value
+      }else if(x=="L"){
+        times = length(mylist)
+        pos8=pos8_value
       }else{
         times = times+1
       }
