@@ -37,20 +37,20 @@ df <- as.data.frame(cbind(directions,values))
 
 '%!in%' <- function(x,y)!('%in%'(x,y))
 
-#store cardinal directions in a dictionary list
+#store cardinal directions in a list
 direction_list <- vector(mode="list", length=4)
 names(direction_list) <- c("N","S","E","W")
-direction_list[[1]] <- c(0,1)
-direction_list[[2]] <- c(0,-1)
-direction_list[[3]] <- c(-1,0)
-direction_list[[4]] <- c(1,0)
+direction_list[[1]] <- c(0,1) #north
+direction_list[[2]] <- c(0,-1) #south
+direction_list[[3]] <- c(1,0) #east
+direction_list[[4]] <- c(-1,0) #west
 
 
-#store rotational directions in a dictionary list
+#store rotational directions in a list
 rotation_list <- vector(mode="list", length=2)
 names(rotation_list) <- c("R","L")
-rotation_list[[1]] <- c(-1,1)
-rotation_list[[2]] <- c(1,-1)
+rotation_list[[1]] <- c(1,-1) #right
+rotation_list[[2]] <- c(-1,1) #left
 
 update <- function(a,b,c,x,y,x_,y_){
   if((a %in% names(direction_list)) && (c)){
@@ -88,12 +88,11 @@ update <- function(a,b,c,x,y,x_,y_){
 
 x=0
 y=0
-x_=-1 #start in the east
+x_=1 #start in the east
 y_=0  #start in the east
 end_result <- update(as.character(df$directions[1]),as.numeric(df$values[1]),c=TRUE,x,y,x_,y_)
 print(end_result)
-# for(j in 2:nrow(df)){
-for(j in 2:12){
+for(j in 2:nrow(df)){
   x=as.numeric(end_result[1])
   y=as.numeric(end_result[2])
   x_=as.numeric(end_result[3])
@@ -101,8 +100,8 @@ for(j in 2:12){
   a <- as.character(df$directions[j])
   b <- as.numeric(df$values[j])
   c=TRUE
-  end_result <- update(a,b,c=TRUE,x,y,x_,y_)
-  print(paste(j,end_result))
+  end_result <- update(a,b,c,x,y,x_,y_)
+  print(end_result)
   }
 
 
@@ -112,3 +111,26 @@ print(distance)
 #-------------------------------------------------------------------------
 #Part 2: Initialization and Results
 #-------------------------------------------------------------------------
+
+
+x=0
+y=0
+x_=10 
+y_=1
+end_result <- update(as.character(df$directions[1]),as.numeric(df$values[1]),c=FALSE,x,y,x_,y_)
+print(end_result)
+for(j in 2:nrow(df)){
+  x=as.numeric(end_result[1])
+  y=as.numeric(end_result[2])
+  x_=as.numeric(end_result[3])
+  y_=as.numeric(end_result[4])
+  a <- as.character(df$directions[j])
+  b <- as.numeric(df$values[j])
+  c=FALSE
+  end_result <- update(a,b,c,x,y,x_,y_)
+  print(end_result)
+}
+
+
+distance = abs(end_result[1]-0) + abs(end_result[2]-0)
+print(distance)
