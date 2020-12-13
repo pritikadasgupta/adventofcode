@@ -3,12 +3,12 @@
 #clear workspace
 rm(list = ls())
 
-#Set working directory and load in data
-# con <- file("stdin", open = "r")
-# data1 <- readLines(con) #read in file
-# close(con)
+#Load Data
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin")) #read in file
 
-# read_lines("solutions/day11/input"))
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- readLines("2020/Day13/input")
 
 setwd("~/Documents/adventofcode1/adventofcode/2020/Day13")
 mydata <- readLines("exercise13.input.txt")

@@ -3,9 +3,11 @@
 #clear workspace
 rm(list = ls())
 
-#Set working directory and load in data
-data1 <- as.numeric(readLines(file("stdin"))) #read in file
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin")) #read in file
 
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- readLines("2020/Day11/input")
 
 #Functions
 #-------------------------------------------------------------------------
