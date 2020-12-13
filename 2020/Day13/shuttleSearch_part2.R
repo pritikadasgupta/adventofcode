@@ -45,7 +45,7 @@ data2_split_int <- as.integer(strsplit(data2, ',')[[1]])
 
 bus_stuff <- function(i, j, k, l, m = 1e5) {
   x <- i + k * (0:m)
-  x[which.max(x %% n2 == j %% l)]
+  x[which.max(x %% l == j %% l)]
 }
 
 find <- function(a) {
