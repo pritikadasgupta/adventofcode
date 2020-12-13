@@ -5,13 +5,11 @@ rm(list = ls())
 
 #Load Data
 #Use this if you're running from the command line:
-# data1 <- readLines(file("stdin")) #read in file
+# mydata <- readLines(file("stdin")) #read in file
 
 #Use this if you're opening this repo as a R project, using relative paths:
-data1 <- readLines("2020/Day13/input")
+mydata <- readLines("2020/Day13/input")
 
-setwd("~/Documents/adventofcode1/adventofcode/2020/Day13")
-mydata <- readLines("exercise13.input.txt")
 data1 <- mydata[1]
 data2 <- mydata[2]
 
@@ -36,15 +34,7 @@ numberofrows <- length(time_buses)
 #create data frame for bus types and times
 df <- data.frame(matrix(ncol = 0, nrow = numberofrows))
 df[,1] <- time_buses
-
-colnames(df)
 colnames(df)[1] <- "time"
-
-# for(column in 2:ncol(df)){
-#   # colnames(df)[column] <- paste("bus",as.character(bus_type[column-1]))
-#   colnames(df)[column] <- as.character(bus_type[column-1])
-# }
-
 df2 <- df
 for(j in 1:length(bus_type)){
   start <- as.numeric(bus_type[j])
@@ -60,10 +50,29 @@ for(j in 1:length(bus_type)){
 #Clean up your data
 #-------------------------------------------------------------------------
 
-mytime <- seq(1,data1_numeric+50,by=1)
-mytime_available <- rep(NA,length(mytime))
+mytime <- seq(data1_numeric,data1_numeric+50,by=1)
+mytime_available <- rep(1,length(mytime))
 
+mydf <- cbind(mytime,mytime_available)
+colnames(mydf) <- c("time","me")
+df2 <- merge(df2,mydf,by="time",all=TRUE)
 
+finaldf <- subset(df2, time>=data1_numeric)
 #-------------------------------------------------------------------------
 #Part 1:
 #-------------------------------------------------------------------------
+
+finaldf$bustotake <- rowSums(finaldf[,c(2:length(bus_type)+1)],na.rm=TRUE)
+
+answers <- vector()
+for(i in 1:nrow(finaldf)){
+  if(finaldf$bustotake[i] == 1){
+    myvector <- finaldf[i,]
+    myidx <- which(finaldf[i,c(2:length(bus_type)+1)]==1)
+    bus_number <- bus_type[myidx+1]
+    answer <- bus_number*(finaldf$time[i]-data1_numeric)
+    answers <- append(answers,answer)
+}}
+
+print(paste("Part 1:",answers[1]))
+
