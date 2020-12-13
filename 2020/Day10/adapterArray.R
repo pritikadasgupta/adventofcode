@@ -1,9 +1,10 @@
 #!/usr/bin/Rscript
 
-#Set working directory and load in data
-con <- file("stdin", open = "r")
-data1 <- readLines(con) #read in file
-close(con)
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin")) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- readLines("2020/Day10/input")
 
 #-------------------------------------------------------------------------
 #Clean up data 

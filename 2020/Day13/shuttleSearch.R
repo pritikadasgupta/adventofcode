@@ -7,6 +7,9 @@ rm(list = ls())
 # con <- file("stdin", open = "r")
 # data1 <- readLines(con) #read in file
 # close(con)
+
+# read_lines("solutions/day11/input"))
+
 setwd("~/Documents/adventofcode1/adventofcode/2020/Day13")
 mydata <- readLines("exercise13.input.txt")
 data1 <- mydata[1]
@@ -27,30 +30,31 @@ for(datum in data2_split){
   }
 }
 
-numberofcolumns <- length(bus_type)
+# numberofcolumns <- length(bus_type)
 numberofrows <- length(time_buses)
 
 #create data frame for bus types and times
-df <- data.frame(matrix(ncol = numberofcolumns, nrow = numberofrows))
+df <- data.frame(matrix(ncol = 0, nrow = numberofrows))
 df[,1] <- time_buses
 
 colnames(df)
 colnames(df)[1] <- "time"
 
-for(column in 2:ncol(df)){
-  # colnames(df)[column] <- paste("bus",as.character(bus_type[column-1]))
-  colnames(df)[column] <- as.character(bus_type[column-1])
-}
-
-
-# for(j in 1:length(bus_type)){
-#   start <- as.numeric(bus_type[j])
-#   end <- as.numeric(nrow(df))
-#   for(k in seq(start,end,by=start)){
-#     df[k,j+1] <- 1
-#   }
+# for(column in 2:ncol(df)){
+#   # colnames(df)[column] <- paste("bus",as.character(bus_type[column-1]))
+#   colnames(df)[column] <- as.character(bus_type[column-1])
 # }
 
+df2 <- df
+for(j in 1:length(bus_type)){
+  start <- as.numeric(bus_type[j])
+  end <- as.numeric(nrow(df))
+  time_list <- as.vector(seq(start,end,by=start))
+  bus_list <- as.vector(rep(1,length(time_list)))
+  df_combine <- cbind(time_list,bus_list)
+  colnames(df_combine) <- c("time",as.character(bus_type[j]))
+  df2 <- merge(df2,df_combine,by="time",all=TRUE)
+}
 
 #-------------------------------------------------------------------------
 #Clean up your data

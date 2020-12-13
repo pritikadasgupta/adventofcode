@@ -4,7 +4,12 @@
 library(tidyverse)
 
 #Load In Data
-df <- read.table(file("stdin"), header = FALSE, sep = " ")
+
+#Use this if you're running from the command line:
+# df <- read.table(file("stdin"), header = FALSE, sep = " ")
+
+#Use this if you're opening this repo as a R project, using relative paths:
+df <- read.table("2020/Day2/input", header = FALSE, sep = " ")
 
 #-------------------
 #Clean up dataframe
@@ -82,3 +87,4 @@ df3$valid <- apply(df3, 1, validPassword2)
 #Part 2 Answer
 #-------------------
 sum(df3$valid)
+

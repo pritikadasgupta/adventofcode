@@ -1,12 +1,17 @@
 #!/usr/bin/env Rscript
+
 #clear workspace
 # rm(list = ls())
+
 #Libraries
 library(tidyverse)
 library(igraph)
 
-#Set working directory and load in data
-data1 <- readLines(file("stdin")) #read in file
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin")) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- read_file("2020/Day7/input")
 
 #-------------------------------------------------------------------------
 #Clean up data and make an edge list with weights for the rules

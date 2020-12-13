@@ -4,9 +4,9 @@
 rm(list = ls())
 
 #Set working directory and load in data
-con <- file("stdin", open = "r")
+# con <- file("stdin", open = "r")
 data1 <- readLines(con) #read in file
-close(con)
+# close(con)
 
 
 #-------------------------------------------------------------------------

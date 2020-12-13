@@ -1,14 +1,18 @@
 #!/usr/bin/env Rscript
+
 #clear workspace
 rm(list = ls())
+
 #Libraries
 # library(tidyverse)
 # library(igraph)
 
-#Set working directory and load in data
-data1 <- readLines(file("stdin")) #read in file
-# setwd("~/Documents/adventofcode1/adventofcode/2020/Day8")
-# data1 <- readLines("exercise8.input.txt") #read in file
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin")) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- readLines("2020/Day8/input")
+
 
 #-------------------------------------------------------------------------
 #Clean up data

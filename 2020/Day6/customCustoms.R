@@ -3,8 +3,11 @@
 #Libraries
 library(tidyverse)
 
-#Set working directory and load in data
-data1 <- readLines(file("stdin")) #read in file
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin")) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- read_file("2020/Day6/input")
 
 #-------------------
 #PART 1

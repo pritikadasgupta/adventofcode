@@ -1,14 +1,18 @@
 #!/usr/bin/env Rscript
+
 #clear workspace
 rm(list = ls())
+
 #Libraries
 # library(tidyverse)
 # library(igraph)
 
 #Set working directory and load in data
-data1 <- as.numeric(readLines(file("stdin"))) #read in file
-# setwd("~/Documents/adventofcode1/adventofcode/2020/Day9")
-# data1 <- as.numeric(readLines("exercise9.input.txt")) #read in file
+#Use this if you're running from the command line:
+# data1 <- as.numeric(readLines(file("stdin")))
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- as.numeric(readLines("2020/Day9/input"))
 
 #Functions
 #-------------------------------------------------------------------------
@@ -67,9 +71,6 @@ for(k in 2:length(data1)){
     sum_to_answer <- min(cont_set)+max(cont_set)
     if(sum_to_check == part1_answer){
       print(paste("Part 2:",sum_to_answer))
-      print(cont_set)
-      print(sum_to_check)
-      print(sum_to_answer)
     }
   }
 }

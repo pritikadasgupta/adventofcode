@@ -3,9 +3,13 @@
 #Libraries
 library(tidyverse)
 
-#Set working directory and load In Data
-# set(wd)
-data1 <- readLines(file("stdin")) #read in file
+#Load In Data
+
+#Use this if you're running from the command line:
+# data1 <- read.table(file("stdin"), header = FALSE, sep = " ")
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- read_file("2020/Day4/input")
 
 #-------------------
 #Clean up dataframe
@@ -153,3 +157,4 @@ for (x in x_valid) {
 
 
 print(paste("Part 2:",validPassports))
+

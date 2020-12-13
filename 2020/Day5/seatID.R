@@ -3,9 +3,11 @@
 #Libraries
 library(tidyverse)
 
-#Set working directory and load In Data
-# set(wd)
-data1 <- readLines(file("stdin")) #read in file
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin")) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- read.table("2020/Day5/input", header = FALSE, sep = " ")
 
 #-------------------
 #PART 1
@@ -61,6 +63,7 @@ for (x in data1) {
 #Part 1: Highest seat ID
 part1 <- max(8*row_+column_) #multiply the row by 8, then add the column
 print(part1)
+
 #Part 2:
 
 #IDs that I have
@@ -72,3 +75,4 @@ allIDs <- seq(listIDs[1],listIDs[length(listIDs)])
 
 #Which ID is mine?
 print(setdiff(allIDs,listIDs))
+
