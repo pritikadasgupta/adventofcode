@@ -21,6 +21,7 @@ You can learn more about this here: https://adventofcode.com/
 | Day 10: [Day 10: Adapter Array](https://adventofcode.com/2020/day/10)    |  \*\*  |
 | Day 11: [Day 11: Seating System](https://adventofcode.com/2020/day/11)    |  \*\*  |
 | Day 12: [Day 12: Rain Risk](https://adventofcode.com/2020/day/12)    |  \*\*  |
+| Day 13: [Day 13: Shuttle Search](https://adventofcode.com/2020/day/13)    |  \*\*  |
 
 ### 2019
 | Challenge                                                                        | Status |
