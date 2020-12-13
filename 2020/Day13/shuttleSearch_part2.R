@@ -49,8 +49,8 @@ bus_stuff <- function(i, j, k, l, m = 1e5) {
 }
 
 find <- function(a) {
-  offsets <- -(seq_along(a) - 1)[!is.na(a)] # a
-  a <- a[!is.na(a)]                     # n
+  offsets <- -(seq_along(a) - 1)[!is.na(a)]
+  a <- a[!is.na(a)]                 
   x <- offsets[1]
   for (i in 2:length(a))
     x <- bus_stuff(x, offsets[i], prod(head(a, i-1)), a[i])
