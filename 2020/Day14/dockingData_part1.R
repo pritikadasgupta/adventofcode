@@ -53,28 +53,14 @@ mydata$mem_value <- ""
 not_unique_mem <- vector()
 #fill in variables
 for(i in 1:length(mask_idx)){
-  if(mydata[mask_idx[i],1]=="mask" && i!=length(mask_idx)){
+  if(mydata[mask_idx[i],1]=="mask"){
     mymask <- mydata[mask_idx[i],2]
-    # new_idx <- c((mask_idx[i]+1):(nrow(mydata)))
-    new_idx <- c((mask_idx[i]+1):(mask_idx[i+1]-1))
-    for(j in new_idx){
-      
-      converted_value_x <- suppressWarnings(convert(mydata[j,2]))
-      masked_value <- mask(mymask,converted_value_x)
-      converted_int <- binary_to_integer(masked_value)
-      
-      memvalues <- suppressWarnings(as.integer(strsplit(mydata$key[j],"")[[1]]))
-      mem_justnumbers <- memvalues[!is.na(memvalues)]
-      mydata$mem_value[j] <- as.integer(paste(mem_justnumbers,collapse=""))
-      
-      mydata$value_masked[j] <- converted_value_x
-      mydata$value_converted[j] <- masked_value
-      mydata$value_int[j] <- converted_int
+    if(i!=length(mask_idx)){
+      end <- (mask_idx[i+1]-1)
+    }else{
+      end <- nrow(mydata)
     }
-  }else if(mydata[mask_idx[i],1]=="mask" && i!=length(mask_idx)){
-    mymask <- mydata[mask_idx[i],2]
-    new_idx <- c((mask_idx[i]+1):(nrow(mydata)))
-    # new_idx <- c((mask_idx[i]+1):(mask_idx[i+1]-1))
+    new_idx <- c((mask_idx[i]+1):end)
     for(j in new_idx){
       
       converted_value_x <- suppressWarnings(convert(mydata[j,2]))
@@ -91,36 +77,6 @@ for(i in 1:length(mask_idx)){
     }
   }
 }
-
-
-# for(i in 1:length(mask_idx)){
-#   if(mydata[mask_idx[i],1]=="mask" && i!=length(mask_idx)){
-#     mymask <- mydata[mask_idx[i],2]
-#     new_idx <- c((mask_idx[i]+1):(mask_idx[i+1]-1))
-#     not_unique_mem <- append(not_unique_mem,as.integer(mydata$mem_value[new_idx]))
-#     for(j in new_idx){
-#       cur_mem <- as.integer(mydata$mem_value[j])
-#       if(length(which(not_unique_mem==cur_mem))==1){
-#         mydata$value_to_sum[j] <- mydata$value_int[j]
-#       }else{
-#         not_unique_mem <- not_unique_mem[-(j-1)]
-#       }
-#     }
-#     
-#   }else if(mydata[mask_idx[i],1]=="mask" && i!=length(mask_idx)){
-#     mymask <- mydata[mask_idx[i],2]
-#     new_idx <- c((mask_idx[i]+1):(nrow(mydata)))
-#     not_unique_mem <- append(not_unique_mem,as.integer(mydata$mem_value[new_idx]))
-#     for(j in new_idx){
-#       cur_mem <- as.integer(mydata$mem_value[j])
-#       if(length(which(not_unique_mem==cur_mem))==1){
-#         mydata$value_to_sum[j] <- mydata$value_int[j]
-#       }else{
-#         not_unique_mem <- not_unique_mem[-(j-1)]
-#       }
-#     }
-#   }
-# }
 
 sorted_mem_values <- sort(as.integer(unique(mydata$mem_value)))
 to_sum <- vector(mode = "numeric", length = length(sorted_mem_values))
@@ -135,4 +91,4 @@ for(a in 1:nrow(mydata)){
 
 
 part1 <- paste(sum(as.numeric(to_sum),na.rm=TRUE))
-
+print(part1)
