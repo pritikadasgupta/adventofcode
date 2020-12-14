@@ -4,10 +4,13 @@ rm(list = ls())
 
 #Libraries
 
-#Set working directory and load in data
-# data1 <- as.integer(readLines(file("stdin"))) #read in file
-setwd("~/Documents/adventofcode1/adventofcode/2019/Day5")
-file1 <- readLines("exercise5.input.txt") #read in file
+#Load Data
+#Use this if you're running from the command line:
+# file1 <- readLines(file("stdin)) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+file1 <- readLines("2019/Day5/exercise5.input.txt") #read in file #read in file
+
 
 #Clean up data
 code <- as.integer(strsplit(file1,",")[[1]])
@@ -55,7 +58,7 @@ while(code[pos]!=99){
     pos=pos+4
   }else if(inst[4]==3){
     print("What is your input?")
-    choice=readline()
+    choice=readline("stdin")
     choice=as.integer(choice)
     if(inst[2]==0){
       code[code[pos+1]]=choice
@@ -68,3 +71,4 @@ while(code[pos]!=99){
     pos=pos+2
   }
 }
+

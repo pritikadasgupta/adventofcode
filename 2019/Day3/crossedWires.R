@@ -1,110 +1,75 @@
 #!/usr/bin/env Rscript
+
+#learning from https://colinfay.me/aoc-2019-03/
+
 #clear workspace
 rm(list = ls())
 
 #Libraries
 
-#Set working directory and load in data
-# data1 <- as.numeric(readLines(file("stdin"))) #read in file
-setwd("~/Documents/adventofcode1/adventofcode/2019/Day3")
-file1 <- "exercise3.testinput.txt" #read in file
+#Load Data
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin)) #read in file
 
-# file1 <- "stdin"
-con <- file(file1, open = "r")
-data1 <- readLines(con) #read in file
-close(con)
-
-test <- "R8,U5,L5,D3"
-test2 <- "U7,R6,D4,L4"
-data1 <- test
-data2 <- test2
-
-
-
-#Function to clean up data
-#-------------------------------------------------------------------------
-
-cleandata <- function(data){
-  
-  data <- as.character(strsplit(data,",")[[1]])
-  
-  directions <- vector()
-  for (datum in data) {
-    directions <- append(directions,strsplit(datum,"")[[1]][1])
-  }
-  
-  values <- vector()
-  for(datum in data){
-    x <- strsplit(datum,"")[[1]]
-    x <- as.numeric(x[2:length(x)])
-    x <- paste(c(x),collapse="")
-    
-    values <- append(values,as.numeric(x))
-  }
-  
-  df <- as.data.frame(cbind(directions,values))
-  return(df)
-}
-
-# data_1 <- cleandata(data1[1])
-# data_2 <- cleandata(data1[2])
-
-data_1 <- cleandata(data1)
-data_2 <- cleandata(data2)
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- scan( "2019/Day3/exercise3.input.txt", what = character(), sep = "\n")
+first <- strsplit(data1[1], split = ",")[[1]]
+sec <- strsplit(data1[2], split = ",")[[1]] 
+# 
+# 
+# test <- "R8,U5,L5,D3"
+# test2 <- "U7,R6,D4,L4"
+# data1 <- test
+# data2 <- test2
 
 
 #-------------------------------------------------------------------------
 #PART 1
 #-------------------------------------------------------------------------
 
-walk <- function(df){
-  x=0
-  y=0
-  for(step in 1:length(df$directions)){
-    c=df$directions[step]
-    n = as.numeric(df$values[step])
-    if(c=="U"){
-      y=y+n
-    }else if(c=="L"){
-      x=x-n
-    }else if(c=="D"){
-      y=y-n
-    }else if(c=="R"){
-      x=x+n
-    }
-    print(paste(x,y))
+directions <- function(ipt, x, y){
+  dir <- substr(ipt, 1, 1)
+  how_m <- as.numeric(substr(ipt, 2, nchar(ipt)))
+  if (dir == "R"){
+    x <- x + how_m
+  } else if (dir == "L"){
+    x <- x - how_m
+  } else if (dir == "U"){
+    y <- y + how_m
+  } else if (dir == "D"){
+    y <- y - how_m
   }
-  return(c(x,y))
+  return(list(x = x, y = y))
 }
 
-distance_origin <- function(a1,a2,b1,b2){
-  c1 <- sqrt(a1^2 + b1^2)
-  # c2 <- sqrt(a1^2 + b2^2)
-  # c3 <- sqrt(a2^2 + b1^2)
-  c4 <- sqrt(a2^2 + b2^2)
-  
-  c_vector <- c(c1,c4)
-  
-  x <-which(c_vector==min(c_vector))
-  
-  if(x==1){
-    return(c(a1,b1))
+get_dir <- function(vec){
+  out <- data.frame(
+    x = 0, 
+    y = 0
+  )
+  for (i in seq_along(vec)){
+    y_m_1 <- out$y[nrow(out)]
+    x_m_1 <- out$x[nrow(out)]
+    res <- directions(vec[i], x = x_m_1, y = y_m_1)
+    out %<>% rbind(
+      data.frame(
+        x = x_m_1:res$x, 
+        y = y_m_1:res$y
+      )[-1, ]
+    )
   }
-  
-  if(x==2){
-    return(c(a2,b2))
-  }
-
-  
+  out$step <- 1:nrow(out) 
+  out
 }
 
-i = walk(data_1)
-j = walk(data_2)
+out_a <- get_dir(first)
+out_b <- get_dir(sec)
 
-dist <- distance_origin(i[1],i[2],j[1],j[2])
-manhattan_distance = abs(dist[1]) + abs(dist[2])
-print(paste("Part 1:",manhattan_distance))
+#part 1:
+res <- merge(out_a, out_b, by = c("x", "y"))
+res$path <- abs(res$x) + abs(res$y)
+sort(unique(res$path))[2]-sort(unique(res$path))[1]
 
-
-# 5319
-# 122514
+#part 2:
+res$tot_step <- res$step.x + res$step.y
+sort(unique(res$tot_step))[2]-sort(unique(res$tot_step))[1]

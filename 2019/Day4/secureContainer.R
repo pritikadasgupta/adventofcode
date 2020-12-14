@@ -2,7 +2,9 @@
 #clear workspace
 rm(list = ls())
 
-#Load in data
+#Load Data
+#Use this if you're running from the command line:
+# data1 <- readLines("stdin) #read in data
 
 data <- "130254-678275"
 data1 <- as.numeric(strsplit(data,"-")[[1]])

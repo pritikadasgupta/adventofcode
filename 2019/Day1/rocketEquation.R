@@ -5,10 +5,12 @@ rm(list = ls())
 # library(tidyverse)
 # library(igraph)
 
-#Set working directory and load in data
-# data1 <- as.numeric(readLines(file("stdin"))) #read in file
-setwd("~/Documents/adventofcode1/adventofcode/2019/Day1")
-data1 <- as.numeric(readLines("exercise1.input.txt")) #read in file
+#Load Data
+#Use this if you're running from the command line:
+# mydata <- as.numeric(file("stdin")) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- as.numeric(readLines("2019/Day1/exercise1.input.txt")) #read in file
 
 #Functions
 #-------------------------------------------------------------------------

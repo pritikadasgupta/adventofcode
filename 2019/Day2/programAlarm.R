@@ -5,10 +5,12 @@ rm(list = ls())
 # library(tidyverse)
 # library(igraph)
 
-#Set working directory and load in data
-# data1 <- as.numeric(readLines(file("stdin"))) #read in file
-setwd("~/Documents/adventofcode1/adventofcode/2019/Day2")
-data1 <- readLines("exercise2.input.txt") #read in file
+#Load Data
+#Use this if you're running from the command line:
+# data1 <- readLines(file("stdin)) #read in file
+
+#Use this if you're opening this repo as a R project, using relative paths:
+data1 <- readLines("2019/Day2/exercise2.input.txt") #read in file
 
 test1 <- "1,9,10,3,2,3,11,0,99,30,40,50"
 test2 <- "1,0,0,0,99"
@@ -125,8 +127,6 @@ for(a in 1:100){
   for(b in 1:100){
     check_num <- gravity(a,b,data2)
     if(check_num==19690720){
-      print(a)
-      print(b)
       part2 <- 100*(a)+(b)
       print(paste("Part 2:",part2))
       break
