@@ -4,8 +4,6 @@
 rm(list = ls())
 
 library(tidyverse)
-library(dplyr)
-library(tidyr)
 
 #Load Data
 #Use this if you're running from the command line:
@@ -13,7 +11,7 @@ library(tidyr)
 
 
 #Use this if you're opening this repo as a R project, using relative paths:
-mydata <- read.table('2020/Day14/input.txt', sep = '=', strip.white = TRUE,col.names = c('key', 'value'))
+mydata <- read.table('2020/Day14/input_test2.txt', sep = '=', strip.white = TRUE,col.names = c('key', 'value'))
 
 #-------------------------------------------------------------------------
 #Clean up data and Functions
@@ -48,7 +46,6 @@ mydata$value_masked <- ""
 mydata$value_converted <- ""
 mydata$value_int <- ""
 mydata$mem_value <- ""
-# mydata$value_to_sum <- ""
 
 not_unique_mem <- vector()
 #fill in variables
@@ -87,8 +84,6 @@ for(a in 1:nrow(mydata)){
     }
   }
 }
-
-
 
 part1 <- paste(sum(as.numeric(to_sum),na.rm=TRUE))
 print(part1)
