@@ -13,7 +13,7 @@ library(tidyr)
 
 
 #Use this if you're opening this repo as a R project, using relative paths:
-mydata <- read.table('2020/Day14/input_test2.txt', sep = '=', strip.white = TRUE,col.names = c('key', 'value'))
+mydata <- read.table('2020/Day14/input.txt', sep = '=', strip.white = TRUE,col.names = c('key', 'value'))
 
 #-------------------------------------------------------------------------
 #Clean up data and Functions
@@ -41,7 +41,6 @@ mask <- function(mask_, x) {
 }
 
 mask_idx <- which(mydata[,1]=="mask")
-
 #create new variables
 mydata$value_masked <- ""
 mydata$value_converted <- ""
@@ -104,37 +103,73 @@ for(i in 1:nrow(mydata)){
       mydata$value_int[j] <- list(converted_int)
       j=j+1
     }
-    print(i)
   }
 }
 
+
+#-------------------------------------------------------------------------
+#More data wrangling and cleaning (or not cleaning)
+#-------------------------------------------------------------------------
+
+
 myvalues <- vector()
 mymemvalues <- vector()
+
 for(i in 1:nrow(mydata)){
   if(mydata[i,1]!="mask"){
-    myvalues <- append(myvalues,mydata$value_converted[[i]])
-    mymemvalues <- append(mymemvalues,mydata$value_int[[i]])
+    mems <- mydata$value_int[[i]]
+    for(j in mems){
+      myvalues <- append(myvalues,mydata$value[[i]])
+      mymemvalues <- append(mymemvalues,j)
+    }
   }
 }
 
 mydf <- as.data.frame(cbind(myvalues,mymemvalues))
 mydf$convertedvalues <- 0
 for(i in 1:nrow(mydf)){
-  mydf$convertedvalues[i] <- binary_to_integer(mydf$myvalues[i])
+  mydf$convertedvalues[i] <- mydf$myvalues[i]
 }
 
-sorted_mem_values <- sort(unique(mydf$mymemvalues))
+all_mem_values <- as.character(unique(mydf$mymemvalues))
+sorted_mem_values <- sort(as.character(unique(mydf$mymemvalues)))
 mydf$to_sum <- 0
+overwrite <- vector()
+#fill it in first
+for(a in 1:nrow(mydf)){
+  for(b in 1:length(sorted_mem_values)){
+    val_a <- as.character(mydf$mymemvalues[a])
+    val_b <- as.character(sorted_mem_values[b])
+    if(val_a == val_b){
+      mydf$to_sum[a] <- as.character(mydf$myvalues[a])
+    }
+  }
+}
 
 for(a in 1:nrow(mydf)){
   for(b in 1:length(sorted_mem_values)){
-    if(mydf$mymemvalues[a]==sorted_mem_values[b]){
-      mydf$to_sum[b] <- mydf$convertedvalues[b]
+    val_a <- as.character(mydf$mymemvalues[a])
+    val_b <- as.character(sorted_mem_values[b])
+    if(val_a == val_b){
+      if(val_b %in% overwrite){
+        myidx <- which(mydf$mymemvalues == val_b)
+        for(b in 1:(length(myidx)-1)){
+          mydf$to_sum[myidx[b]] <- "0"
+        }
+      }
+      # mydf$to_sum[a] <- as.character(mydf$myvalues[a])
+      overwrite <- append(overwrite,val_b)
     }
   }
 }
 
 
-part2 <- paste(sum(as.numeric(mydf$to_sum),na.rm=TRUE))
+#-------------------------------------------------------------------------
+#Part 2 Answer:
+#-------------------------------------------------------------------------
+
+address_sum <- sum(as.numeric(mydf$to_sum),na.rm=TRUE)
+
+part2 <- paste(sum(address_sum,na.rm=TRUE))
 print(part2)
 
