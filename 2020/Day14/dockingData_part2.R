@@ -3,9 +3,8 @@
 #clear workspace
 rm(list = ls())
 
-library(tidyverse)
-library(dplyr)
-library(tidyr)
+# Libraries
+library(data.table)
 
 #Load Data
 #Use this if you're running from the command line:
@@ -40,6 +39,19 @@ mask <- function(mask_, x) {
   paste(x, collapse = '')
 }
 
+MyIntToBit <- function(x, dig) {
+  i <- 0L
+  string <- numeric(dig)
+  while (x > 0) {
+    string[dig - i] <- x %% 2L
+    x <- x %/% 2L
+    i <- i + 1L
+  }
+  string
+}
+
+
+
 mask_idx <- which(mydata[,1]=="mask")
 #create new variables
 mydata$value_masked <- ""
@@ -52,7 +64,7 @@ for(i in 1:nrow(mydata)){
   if(mydata[i,1]=="mask"){
     mymask <- mydata[i,2]
     j=i+1
-    while(mydata[j,1]!="mask" && j!=(nrow(mydata)+1)){
+    while(mydata[j,1]!="mask" && j<(nrow(mydata)+1)){
       
       memvalues <- suppressWarnings(as.integer(strsplit(mydata$key[j],"")[[1]]))
       mem_justnumbers <- memvalues[!is.na(memvalues)]
@@ -79,23 +91,40 @@ for(i in 1:nrow(mydata)){
       
       #next find combos
       mask_1 <- strsplit(mymask, '')[[1]]
-      x1 <- x2
       Xtimes <- which(mask_1=="X")
-      all_x <- vector()
+      all_x <- list()
       n <- length(Xtimes)
-      Xtimes_solns <- lapply(0:(2^n-1), FUN=function(x) head(as.integer(intToBits(x)),n))
       
-      for(a in 1:length(Xtimes_solns)){
-        cur_soln <- Xtimes_solns[[a]]
+      #attempt 1: Error: vector memory exhausted (limit reached?)
+      # Xtimes_solns <- lapply(0:(2^n-1), FUN=function(x) head(as.integer(intToBits(x)),n))
+      
+      #attempt 2: takes too long
+      # l <- rep(list(0:1), n)
+      # Xtimes_solns <- expand.grid(l)
+      
+      #attempt 3:
+      # Xtimes_solns <- lapply(0:(2^n - 1), function(x) MyIntToBit(x,n))
+      
+      #attempt using data.table
+      # Xtimes_solns <- do.call(CJ, replicate(n, 0:1, FALSE))
+        
+      library(iterpc)
+      I = iterpc(2, n, label=c(0,1), ordered=T, replace=T)
+      
+      for(a in 1:(2^n)){
+        x1 <- x2
+        cur_soln <- getnext(I)
         for(b in 1:length(cur_soln)){
-          x1[Xtimes[b]] = cur_soln[b]
+          x1[Xtimes[b]] = as.character(cur_soln[b])
         }
         all_x <- append(all_x,paste(x1,collapse=''))
       }
       
-      converted_int <- vector()
-      for(masked_value in all_x){
-        converted_int <- append(converted_int,binary_to_integer(masked_value))
+      rm(I)
+      
+      converted_int <- list()
+      for(masked_value in 1:length(all_x)){
+        converted_int <- append(converted_int,binary_to_integer(all_x[masked_value][[1]]))
       }
       
       mydata$value_masked[j] <- converted_value_x

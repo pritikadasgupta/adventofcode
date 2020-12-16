@@ -4,7 +4,8 @@
 rm(list = ls())
 
 #data
-input_test <- "1,20,11,6,12,0"
+input_test <- "stdin"
+# input_test <- "1,20,11,6,12,0"
 # input_test <- "0,3,6"
 input_test <- strsplit(input_test,",")[[1]]
 input_test_long <- rep(0,30000000)
