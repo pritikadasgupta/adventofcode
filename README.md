@@ -24,6 +24,8 @@ You can learn more about this here: https://adventofcode.com/
 | Day 13: [Day 13: Shuttle Search](https://adventofcode.com/2020/day/13)    |  \*\*  |
 | Day 14: [Day 14: Docking Data](https://adventofcode.com/2020/day/14)    |  \*\*  |
 | Day 15: [Day 15: Rambunctious Recitation](https://adventofcode.com/2020/day/15)    |  \*\*  |
+| Day 16: [Day 16: Ticket Translation](https://adventofcode.com/2020/day/16)    |  \*\*  |
+| Day 17: [Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)    |  \*\*  |
 
 ### 2019
 | Challenge                                                                        | Status |
