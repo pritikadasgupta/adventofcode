@@ -189,10 +189,11 @@ while(length(my_mat2) >1 && row <=nrow(my_mat2)){
   
 }
 
-x <- myticket[as.numeric(rules_)]
+x <- myticket[as.numeric(rules_location_)]
 y <- startsWith(my_results$V2,"departure")
 
 my_results <- as.data.frame(cbind(rules_,rules[as.numeric(rules_)],rules_location_))
 my_results2 <- subset(my_results,startsWith(my_results$V2,"departure"))
 part2 <- prod(x[y])
-print(paste("Part 2:",prod(as.numeric(my_results2$rules_location_))))
+print(paste("Part 2:",part2))
+
