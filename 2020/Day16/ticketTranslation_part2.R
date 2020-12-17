@@ -89,7 +89,7 @@ nearbyticket2 <- nearbyticket
 k=1
 nt_length <- length(nearbyticket2)
 while(k<=nt_length && k!=0){
-  if(sum(nearbyticket2[[k]] %in% valid_num) <3){
+  if(sum(nearbyticket2[[k]] %in% valid_num) <length(nearbyticket[[1]])){
     nearbyticket2 <- nearbyticket2[-k]  
     k=1
   }else{
@@ -98,39 +98,21 @@ while(k<=nt_length && k!=0){
   }
 }
 
-# #will change this later
-# firstpositions <- vector()
-# secondpositions <- vector()
-# thirdpositions <- vector()
-# for(k in 1:length(nearbyticket)){
-#   firstpositions <- append(firstpositions, nearbyticket[[k]][1])
-#   secondpositions <- append(secondpositions, nearbyticket[[k]][2])
-#   thirdpositions <- append(thirdpositions, nearbyticket[[k]][3])
-# }
-# 
-# 
-# firstpositions %in% rule_parser(rules[1])
-# firstpositions %in% rule_parser(rules[2])
-# firstpositions %in% rule_parser(rules[3])
 
 track_r <- vector()
 track_k <- vector()
 track_b <- vector()
 track_v <- vector()
 track_value <- vector()
-for(k in 1:length(nearbyticket)){
-  for(b in 1:length(nearbyticket[[k]])){
+for(k in 1:length(nearbyticket2)){
+  for(b in 1:length(nearbyticket2[[k]])){
     for(r in 1:length(rules)){
       track_k <- append(track_k,k)
       track_b <- append(track_b,b)
       track_r <- append(track_r,r)
-      track_value <- append(track_value,nearbyticket[[k]][b])
-      if(nearbyticket[[k]][b] %in% rule_parser(rules[r])){
+      track_value <- append(track_value,nearbyticket2[[k]][b])
+      if(nearbyticket2[[k]][b] %in% rule_parser(rules[r])){
         track_v <- append(track_v,"V")
-        # track_k <- append(track_k,k)
-        # track_b <- append(track_b,b)
-        # track_r <- append(track_r,r)
-        # track_value <- append(track_value,nearbyticket[[k]][b])
       }else{
         track_v <- append(track_v,"IV")
       }
@@ -139,52 +121,78 @@ for(k in 1:length(nearbyticket)){
 }
 
 mydf <- as.data.frame(cbind(track_value,track_k,track_b,track_r,track_v))
+mycolumns <- 1:length(nearbyticket2[[1]])
+mylist <- vector(mode = "list", length = length(mycolumns))
+for(num in mycolumns){
+  smalldf <- subset(mydf,mydf$track_b==num)
+  smalldf <- subset(mydf,mydf$track_b==num)
+  rules_impossible <- vector()
+  for(d in 1:nrow(smalldf)){
+    for(r in 1:lengths(rule_parser(rules[r]))){
+      if(smalldf$track_v[d]=="IV"){
+        rules_impossible <- append(rules_impossible,as.numeric(smalldf$track_r[d]))
+      }
+    }
+  }
+  rules_impossible1 <- unique(rules_impossible)
+  mylist[[num]] <- as.numeric(rules_impossible1)
+}
 
 
-mycolumns <- as.numeric(unique(mydf$track_b))
 
-# 
-# mylist <- vector(mode = "list", length = length(mycolumns))
-# for(num in mycolumns){
-#   smalldf <- subset(mydf,mydf$track_b==num)
-#   smalldf <- subset(mydf,mydf$track_b==num)
-#   rules_impossible <- vector()
-#   for(d in 1:nrow(smalldf)){
-#     for(r in 1:lengths(rule_parser(rules[r]))){
-#       if(smalldf$track_v[d]=="IV"){
-#         rules_impossible <- append(rules_impossible,as.numeric(smalldf$track_r[d]))
-#       }
-#     }
-#   }
-#   rules_impossible1 <- unique(rules_impossible)
-#   mylist[[num]] <- as.numeric(rules_impossible1)
-# }
-# 
-# 
-# my_mat <- matrix(data = as.integer(2), ncol = length(mycolumns), nrow = length(mycolumns)) 
-# 
-# for(column in 1:length(mylist)){
-#   check <- mylist[[column]]
-#   for(row in check){
-#     my_mat[row,column] <- 1L
-#   }
-# }
-# 
-# 
-# 
-# #Graphics: https://rpubs.com/lgadar/matrix-visualizations
-# A <- my_mat
-# longData<-melt(A)
-# longData<-longData[longData$value!=0,]
-# 
-# ggplot(longData, aes(x = Var2, y = Var1)) + 
-#   geom_raster(aes(fill=value)) + 
-#   scale_fill_gradient(low="#63ACBE", high="#601A4A") +
-#   labs(x="rules", y="positions", title="Positions vs. Rules Matrix") +
-#   theme_bw() + theme(axis.text.x=element_text(size=9, angle=0, vjust=0.3),
-#                      axis.text.y=element_text(size=9),
-#                      plot.title=element_text(size=11))
-# 
-# 
-# 
-# 
+fakeData <- rep(1, size=length(mycolumns) * length(mycolumns))
+my_mat <- matrix(fakeData,ncol = length(mycolumns), nrow = length(mycolumns))
+
+for(column in 1:length(mylist)){
+  check <- mylist[[column]]
+  for(row in check){
+    
+    my_mat[row,column] <- 0
+  }
+}
+
+#Graphics: https://rpubs.com/lgadar/matrix-visualizations
+A <- my_mat
+longData<-melt(A)
+longData<-longData[longData$value!=0,]
+
+ggplot(longData, aes(x = Var2, y = Var1)) +
+  geom_raster(aes(fill=value)) +
+  scale_fill_gradient(low="#63ACBE", high="#601A4A") +
+  labs(x="rules", y="positions", title="Positions vs. Rules Matrix") +
+  theme_bw() + theme(axis.text.x=element_text(size=9, angle=0, vjust=0.3),
+                     axis.text.y=element_text(size=9),
+                     plot.title=element_text(size=11))
+
+
+#figure out positions which only satisfy one rule
+my_mat2 <- my_mat
+rules_ <- vector()
+rules_location_ <- vector()
+row = 1
+rownames(my_mat2) <- c(1:20)
+colnames(my_mat2) <- c(1:20)
+while(length(my_mat2) >1 && row <=nrow(my_mat2)){
+# for(row in 1:nrow(my_mat2)){
+  if(sum(my_mat2[row,])==1){
+    cur <- which(my_mat2[row,]==1)
+    print(paste("position",rownames(my_mat2)[row],"is at:",cur))
+    
+    rules_ <- append(rules_,rownames(my_mat2)[row])
+    rules_location_ <- append(rules_location_,cur)
+    
+    my_mat2<- my_mat2[-row,-cur]
+    row <-1
+  }else{
+    row=row+1
+  }
+  
+}
+
+x <- myticket[as.numeric(rules_)]
+y <- startsWith(my_results$V2,"departure")
+
+my_results <- as.data.frame(cbind(rules_,rules[as.numeric(rules_)],rules_location_))
+my_results2 <- subset(my_results,startsWith(my_results$V2,"departure"))
+part2 <- prod(x[y])
+print(paste("Part 2:",prod(as.numeric(my_results2$rules_location_))))
