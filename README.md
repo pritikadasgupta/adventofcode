@@ -26,6 +26,7 @@ You can learn more about this here: https://adventofcode.com/
 | Day 15: [Day 15: Rambunctious Recitation](https://adventofcode.com/2020/day/15)    |  \*\*  |
 | Day 16: [Day 16: Ticket Translation](https://adventofcode.com/2020/day/16)    |  \*\*  |
 | Day 17: [Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)    |  \*\*  |
+| Day 18: [Day 18: Operation Order](https://adventofcode.com/2020/day/18)    |  \*\*  |
 
 ### 2019
 | Challenge                                                                        | Status |
