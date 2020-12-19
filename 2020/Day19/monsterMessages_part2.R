@@ -42,17 +42,16 @@ rules <- subsetList(mydata,c((1):(null_idx-1)))
 
 
 # completely replace rules 8: 42 and 11: 42 31 with the following:
-#   
-#   8: 42 | 42 8
+# 8: 42 | 42 8
 # 11: 42 31 | 42 11 31
-for(k in 1:length(rules)){
-  if(rules[[k]]=="8: 42"){
-    rules[[k]] <-"8: 42 | 42 8"
-  }
-  if(rules[[k]]=="11: 42 31"){
-    rules[[k]] <-"11: 42 31 | 42 11 31"
-  }
-}
+# for(k in 1:length(rules)){
+#   if(rules[[k]]=="8: 42"){
+#     rules[[k]] <-"8: 42 | 42 8"
+#   }
+#   if(rules[[k]]=="11: 42 31"){
+#     rules[[k]] <-"11: 42 31 | 42 11 31"
+#   }
+# }
 
 
 #rule cleaning
