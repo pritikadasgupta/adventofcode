@@ -44,27 +44,30 @@ rules <- subsetList(mydata,c((1):(null_idx-1)))
 # completely replace rules 8: 42 and 11: 42 31 with the following:
 # 8: 42 | 42 8
 # 11: 42 31 | 42 11 31
-# for(k in 1:length(rules)){
-#   if(rules[[k]]=="8: 42"){
-#     rules[[k]] <-"8: 42 | 42 8"
-#   }
-#   if(rules[[k]]=="11: 42 31"){
-#     rules[[k]] <-"11: 42 31 | 42 11 31"
-#   }
-# }
+n=10
+for(k in 1:length(rules)){
+  if(rules[[k]]=="8: 42"){
+    rules[[k]] <-"(( 42 )+)"
+  }
+  if(rules[[k]]=="11: 42 31"){
+    rules[[k]] <-paste0("( 42 ){", 1:n, "}( 31 ){", 1:n, "}") %>%
+      paste(collapse = " | ") %>% paste0("(", ., ")")
+  }
+}
 
 
 #rule cleaning
 id <- vector()
 rule <- vector()
 for(j in 1:length(rules)){
+  
   rule_ <- strsplit(rules[[j]],":")[[1]][2]
   rule_ <- as.character(strsplit(rule_," ")[[1]])
   rule_ <- rule_[which(rule_!="")]
   rule_ <- paste(rule_,collapse=" ")
   rule_ <- paste("( ", rule_, " )",sep="")
   
-  id <- append(id,j-1)
+  id <- append(id,as.numeric(strsplit(rules[[j]],":")[[1]][1]))
 
   rule <- append(rule,rule_)
 }
@@ -128,3 +131,4 @@ for(d in 1:length(messages)){
 }
 
 sum(valid)
+
