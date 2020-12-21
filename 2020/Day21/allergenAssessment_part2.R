@@ -4,16 +4,13 @@
 rm(list = ls())
 
 # Libraries
-library(tidyverse)
-library(tidyr)
-library(dplyr)
 
 #------------------------------------------------------------------------------------------
 #Load Data
 #------------------------------------------------------------------------------------------
 
 #Use this if you're running from the command line:
-# mydata <- strsplit(readLines(file("stdin"))," ")
+# mydata <- readLines(file("stdin"))
 
 #Use this if you're opening this repo as a R project, using relative paths:
 # mydata <- strsplit(readLines('2020/Day19/input_test1.txt')," ")
@@ -97,16 +94,54 @@ possible_allergen <- unique(unlist(mylist))
 non_allergen <- outersect(unique_ingredients,possible_allergen)
 
 
-for(i in 1:length(mydata)){
-  curdf <- parser(mydata[i])
-  curr_allergens <- unique(curdf$allergens_df)
-  # curr_ingredients <- unique(curdf$ingredients_df)
-  for (allergen in curr_allergens){
-    mylist[allergen][[1]] <- outersect(mylist[allergen][[1]],possible_allergen)
+total = 0
+for (x in mydata){
+  curdf2 <- parser(x)
+  curr_ingredients <- unique(curdf2$ingredients_df)
+  for(ingredient in curr_ingredients){
+    if(ingredient %in% non_allergen){
+      total=total+1
+    }
+  }
+  
+}
+
+print(total)
+
+
+#part 2:
+found <- mylist
+a=1
+#for singletons
+# for(a in 1:length(unique_allergens)){
+while(a <=length(unique_allergens)){
+  allergen <- unique_allergens[a]
+  ingredients_ <- mylist[[allergen]]
+  if(length(ingredients_)==1){
+    found[[allergen]] <- ingredients_
+    mylist[[allergen]] <- NULL
+
+    unique_allergens <- unique_allergens[!unique_allergens %in% allergen]
+    
+    for(allergen2 in unique_allergens){
+      mylist[[allergen2]] <- mylist[[allergen2]][!mylist[[allergen2]] %in% ingredients_]
+    }
+    a=1
+  }else{
+    a = a+1
   }
 }
 
-# {'wheat': {'xchzh'}, 'peanuts': {'qjxxpr'}, 'sesame': {'hdsm'}, 'eggs': {'nbgklf'}, 'soy': {'sjhds'}, 'dairy': {'nfnfk'}, 'nuts': {'fttbhdr'}, 'fish': {'clvr'}}
+
+
+df <- as.data.frame(found)
+names_df <- sort(colnames(df))
+
+to_paste <- paste(found[names_df[1]])
+for(i in 2:length(names_df)){
+  to_paste <- paste(to_paste,",",found[names_df[i]],sep="")
+}
+
+print(to_paste)
+
 # nfnfk,nbgklf,clvr,fttbhdr,qjxxpr,hdsm,sjhds,xchzh
-
-
