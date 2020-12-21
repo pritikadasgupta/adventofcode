@@ -13,7 +13,7 @@ rm(list = ls())
 # mydata <- readLines(file("stdin"))
 
 #Use this if you're opening this repo as a R project, using relative paths:
-# mydata <- strsplit(readLines('2020/Day19/input_test1.txt')," ")
+# mydata <- readLines('2020/Day21/input_test1.txt')
 mydata <- readLines('2020/Day21/input.txt')
 
 #------------------------------------------------------------------------------------------
