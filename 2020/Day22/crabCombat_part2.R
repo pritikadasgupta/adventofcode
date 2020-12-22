@@ -14,7 +14,7 @@ rm(list = ls())
 
 #Use this if you're opening this repo as a R project, using relative paths:
 # mydata <- readLines('2020/Day22/input_test1.txt')
-mydata <- readLines('2020/Day22/input_test1.txt')
+mydata <- readLines('2020/Day22/input.txt')
 
 #------------------------------------------------------------------------------------------
 #The Game
@@ -25,65 +25,44 @@ player_idx <- which(grepl("Player", mydata, fixed = TRUE)==TRUE)
 
 player1 <-as.numeric(mydata[(player_idx[1]+1):(player_idx[2]-2)])
 player2 <-as.numeric(mydata[(player_idx[2]+1):(length(mydata))])
+subgame = FALSE
 
-#rounds of the game
-player1_wins <- function(player1,player2){
-  prev_rounds <- list(player1, player2)
-  while(length(player1)>0 && length(player2)>0){
-    value_1 <- player1[1]
-    value_2 <- player2[1]
-    
-    if(length(player1) >= value_1 && length(player2) >= value_2){
-      
-      result <- player1_wins(player1[1:value_1],player2[1:value_2])
-      player1 <- result[[2]]
-      player2 <- result[[3]]
-      if (result[[1]]){
-        player1 <- append(player1,value_1) 
-        player1 <- append(player1,value_2) 
-      }else{
-        player2 <- append(player2,value_2) 
-        player2 <- append(player2,value_1)
-      }
-      
-    }else{
-      if(value_1 > value_2){
-        player1 <- append(player1,value_1) 
-        player1 <- append(player1,value_2)
-      }else{
-        player2 <- append(player2,value_2) 
-        player2 <- append(player2,value_1)
-      }
-    }
-    
-    if(length(player1)!=0 && length(player2)!=0){
-      return(list(TRUE,player1,player2))
-    }else{
-      prev_rounds <- append(prev_rounds,list(player1, player2))
-    }
-    
-    
+#heavily inspired from:
+# https://selbydavid.com/2020/12/06/advent-2020/#day22
+recursive_combat <- function(player1, player2, subgame) {
+  if (subgame & (max(player1) > max(player2))){
+    return(player1)
   }
   
-  if(length(player1)>length(player2)){
-    return(list(TRUE,player1,player2))
-  }else{return(list(FALSE,player1,player2))}
+  played <- NULL
   
+  while (length(player1) & length(player2)) {
+    config <- paste(player1, player2, collapse = ',', sep = '|')
+    if (config %in% played) return(player1)
+    played <- c(played, config)
+    
+    if (player1[1] < length(player1) & player2[1] < length(player2)) {
+      win1 <- all( recursive_combat(head(player1[-1], player1[1]),
+                                    head(player2[-1], player2[1]),
+                                    subgame = TRUE) > 0 )
+    } else win1 <- player1[1] > player2[1]
+    
+    result1 <- c(player1[-1], player1[1][win1], player2[1][win1])
+    result2 <- c(player2[-1], player2[1][!win1], player1[1][!win1])
+    
+    player1 <- result1
+    player2 <- result2
+  }
+  
+  if (!length(player1)) return(-player2)
+  player1
 }
 
 
 # score
-calculate_score <- function(playerx){
-  count = 0
-  for(i in 1:length(playerx)){
-    count = count+ playerx[i]*(length(playerx)-i)
-  }
-  return(count)
+calculate_score <- function(result){
+  return(sum(rev(result) * seq_along(result)))
 }
 
-
-
-player1_wins(player1,player2)
-calculate_score(player1_wins(player1,player2)[[2]]) #player 1
-calculate_score(player1_wins(player1,player2)[[3]]) #player 2
+print(calculate_score(recursive_combat(player1,player2,FALSE)))
 

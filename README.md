@@ -13,11 +13,11 @@ You can learn more about this here: https://adventofcode.com/
 | Day 02: [Day 2: Password Philosophy](https://adventofcode.com/2020/day/2)  |  \*\*  |
 | Day 03: [Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)    |  \*\*  |
 | Day 04: [Day 4: Passport Processing](https://adventofcode.com/2020/day/4)    |  \*\*  |
-| Day 05: [Day 5: Binary Boarding](https://adventofcode.com/2020/day/5)    |  \*\*  |
-| Day 06: [Day 6: Custom Customs](https://adventofcode.com/2020/day/6)    |  \*\*  |
-| Day 07: [Day 7: Handy Haversacks](https://adventofcode.com/2020/day/7)    |  \*\*  |
-| Day 08: [Day 8: Handheld Halting](https://adventofcode.com/2020/day/8)    |  \*\*  |
-| Day 09: [Day 9: Encoding Error](https://adventofcode.com/2020/day/9)    |  \*\*  |
+| Day 05: [Day 5: Binary Boarding](https://adventofcode.com/2020/day/5)           |  \*\*  |
+| Day 06: [Day 6: Custom Customs](https://adventofcode.com/2020/day/6)         |  \*\*  |
+| Day 07: [Day 7: Handy Haversacks](https://adventofcode.com/2020/day/7)       |  \*\*  |
+| Day 08: [Day 8: Handheld Halting](https://adventofcode.com/2020/day/8)         |  \*\*  |
+| Day 09: [Day 9: Encoding Error](https://adventofcode.com/2020/day/9)            |  \*\*  |
 | Day 10: [Day 10: Adapter Array](https://adventofcode.com/2020/day/10)    |  \*\*  |
 | Day 11: [Day 11: Seating System](https://adventofcode.com/2020/day/11)    |  \*\*  |
 | Day 12: [Day 12: Rain Risk](https://adventofcode.com/2020/day/12)    |  \*\*  |
@@ -27,6 +27,11 @@ You can learn more about this here: https://adventofcode.com/
 | Day 16: [Day 16: Ticket Translation](https://adventofcode.com/2020/day/16)    |  \*\*  |
 | Day 17: [Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)    |  \*\*  |
 | Day 18: [Day 18: Operation Order](https://adventofcode.com/2020/day/18)    |  \*\*  |
+| Day 19: [Day 19: Monster Messages](https://adventofcode.com/2020/day/19)    |  \*\*  |
+| Day 20: [Day 20: Jurassic Jigsaw](https://adventofcode.com/2020/day/20)    |  \*\*  |
+| Day 21: [Day 21: Allergen Assessment](https://adventofcode.com/2020/day/21)    |  \*\*  |
+| Day 22: [Day 22: Crab Combat](https://adventofcode.com/2020/day/22)    |  \*\*  |
+
 
 ### 2019
 | Challenge                                                                        | Status |
