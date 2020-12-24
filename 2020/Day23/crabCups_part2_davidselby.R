@@ -1,4 +1,6 @@
-linked_cups <- function(circle, moves = 10, terms = 9) {
+#!/usr/bin/Rscript
+
+linked_cups <- function(circle, moves, terms) {
   ncups <- length(circle)
   stopifnot(terms <= ncups)
   # Linked list where each index is the label of the preceding cup.
