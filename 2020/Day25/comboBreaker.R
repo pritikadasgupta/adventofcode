@@ -1,17 +1,7 @@
 #!/usr/bin/env Rscript
-
-#clear workspace
-rm(list = ls())
-
-# Libraries
-library(tidyverse)
-
 #------------------------------------------------------------------------------------------
 #Load Data
 #------------------------------------------------------------------------------------------
-
-#Use this if you're running from the command line:
-
 #Use this if you're opening this repo as a R project, using relative paths:
 mydata <- readLines("2020/Day25/input.txt")
 #------------------------------------------------------------------------------------------
