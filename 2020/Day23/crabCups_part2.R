@@ -53,16 +53,9 @@ crabCupGame <- function(cups_original,moves,ncups){
   cur = cups_original[1]
   
   for(i in seq_len(moves)) {
-    #cat("Move ", i, "\n")
-    #cat("Cur : ",  cur, "\n")
-    #cat("Cups: ")
-    #to_cups_original(d)
-    
     sel1 = d[cur]
     sel2 = d[sel1]
     sel3 = d[sel2]
-    
-    #cat("pick up: ", sel1, sel2, sel3, "\n")
     
     d[cur] = d[sel3]
     
@@ -73,15 +66,11 @@ crabCupGame <- function(cups_original,moves,ncups){
       else
         dest = dest - 1
     }
-    
-    #cat("Dest: ", dest, "\n\n")
-    
     end = d[dest]
     d[dest] = sel1
     d[sel3] = end
     
     cur = d[cur]
-    #to_cups_original(d)
   }
   
   c(d[1], d[ d[1] ])
