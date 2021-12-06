@@ -33,10 +33,13 @@ lanternfish(mydata,80) #took a long time, don't recommend
 #------------------------------------------------------------------------------------------
 
 lanternfish2 <- function(x,days){
-  fish <- c(0, tabulate(x)) 
-  len <- length(fish)
-  for(i in (len+1):9){
-    fish[i] <- 0
+  fish <- rep(0,9)
+  for(i in 0:8){
+    if(i %in% names(table(x))){
+      fish[i+1] <- table(x)[names(table(x)) == (i)]
+    }else{
+      fish[i+1] <-0
+    }
   }
   
   for(j in 1:days) {
