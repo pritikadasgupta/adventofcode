@@ -8,9 +8,6 @@ example <- strsplit("abcdefgh", "")[[1]]
 #------------------------------------------------------------------------------------------
 #Part 1
 #------------------------------------------------------------------------------------------
-x <- example
-pointer <- length(x)
-
 increment_password <- function(x,pointer){
   y <- match(x, letters)
   
@@ -25,12 +22,12 @@ increment_password <- function(x,pointer){
       y[seq(min(which_min + 1, 8), 8)] <- 1
     }
   }
-  
+  # print(y[pointer])
   #if letter value exceeds 26 (z)
   if (y[pointer] == 27) {
     y[pointer] <- 1
     if (pointer > 1) {
-      y <- increment_password(letters[y],pointer-1)
+      y <- match(increment_password(letters[y],pointer-1),letters)
     }
   }
   
@@ -67,7 +64,7 @@ password <- function(x){
       i <- 1
     }else{
       x <-new_password
-      print(x)
+      # print(x)
     }
   }
   return(paste0(new_password, collapse = ""))
@@ -75,8 +72,8 @@ password <- function(x){
 
 
 password(example)
-password(mydata)
+part1 <- password(mydata)
 #------------------------------------------------------------------------------------------
 #Part 2
 #------------------------------------------------------------------------------------------
-password(password(mydata))
+part2 <- password(strsplit(part1, "")[[1]])
