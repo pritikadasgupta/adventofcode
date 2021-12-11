@@ -55,6 +55,8 @@ flash_steps(mydata,100)
 #------------------------------------------------------------------------------------------
 #Part 2
 #------------------------------------------------------------------------------------------
+rotate <- function(x) t(apply(x, 2, rev))
+
 all_flash_steps <- function(x)  {
   
   #format
@@ -67,6 +69,11 @@ all_flash_steps <- function(x)  {
   all_flash_step <- NA
   step <- 1
   a <- 0
+  
+  png(file = paste("myplot",step,".png",sep=""))
+  image(rotate(mat),main=paste("Step",step,sep=" "))
+  dev.off()
+  
   while(a==0) {
     mat <- mat + 1 #update energy level
     
@@ -93,6 +100,11 @@ all_flash_steps <- function(x)  {
       step <- step + 1
     }
     
+    png(file = paste("myplot",step,".png",sep=""))
+    image(rotate(mat),main=paste("Step",step,sep=" "))
+    dev.off()
+    
+    
     mat[is.na(mat)] <- 0 #reset
   }
   
@@ -100,3 +112,22 @@ all_flash_steps <- function(x)  {
 }
 
 all_flash_steps(mydata)
+
+n <- all_flash_steps(mydata)
+library(animation)
+bm.files = sprintf("myplot%i.png", 1:n)
+head(bm.files)
+im.convert(files = bm.files, output = "day11.gif")
+
+
+
+
+
+
+
+
+
+
+
+
+
