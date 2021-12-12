@@ -4,76 +4,56 @@
 #Load Data
 #------------------------------------------------------------------------------------------
 #Use this if you're opening this repo as a R project, using relative paths:
-mydata <- as.character(readLines("2021/Day12/input.txt"))
-example1 <- as.character(readLines("2021/Day12/example1.txt"))
-example2 <- as.character(readLines("2021/Day12/example2.txt"))
+mydata <- read.delim("2021/Day12/input.txt",sep="-",header = FALSE,col.names = c("from","to"))
+example1 <- read.delim("2021/Day12/example1.txt",sep="-",header = FALSE,col.names = c("from","to"))
+example2 <- read.delim("2021/Day12/example2.txt",sep="-",header = FALSE,col.names = c("from","to"))
 
 #------------------------------------------------------------------------------------------
 #Part 1
 #------------------------------------------------------------------------------------------
 
-# path_traversal <- function(mat,current_node,unique_nodes,paths){
-#   if(current_node=="end"){
-#     paths <- paths + 1
-#     # print(paths)
-#   }
-#   
-#   routes <- sum(mat[current_node,]==1) 
-#   if(routes==0){
-#     return(paths)
-#   }else{
-#     next_cave <- unique_nodes[mat[current_node,]==1]
-#     for(i in 1:length(next_cave)){
-#       next_node <- next_cave[i]
-#       current_node_num <- which.max(unique_nodes == current_node)
-#       first_letter <- strsplit(current_node,"")[[1]][1]
-#       if(first_letter %in% letters){
-#         paths <- path_traversal(mat[,-current_node_num],next_node,unique_nodes[-current_node_num],paths)
-#       }else{
-#         paths <- path_traversal(mat,next_node,unique_nodes,paths)
-#       }
-#     }
-#   }
-# }
+x <- mydata
+unique_nodes <- unique(unlist(x))
+valid_nodes <- setNames(rep(TRUE, length(unique_nodes)), unique_nodes)
+visits <- setNames(rep(0, length(unique_nodes)), unique_nodes)
+start <- "start"
+finish <- "end"
+part <- 1
 
-x <- example1
-df <- as.data.frame(matrix(0, ncol=2,nrow=0))
-for(i in 1:length(x)){
-  y <- strsplit(x[i],"-")[[1]]
-  df <- rbind(df,y)
+num_paths <- function(x, valid_nodes, visits, start, finish, part) {
+  if (start == finish) {
+    return(1)
+  }
+  
+  if (tolower(start) == start) {
+    if (start == "start"){
+      valid_nodes[start] <- FALSE
+    }
+    
+    visits[start] <- visits[start] + 1
+    
+    if (visits[start] == part) {
+      valid_nodes[names(visits[visits >= 1])] <- FALSE
+    } else if (any(visits == part)) {
+      valid_nodes[start] <- FALSE
+    }
+  }
+  
+  next_nodes <- c(x$from[x$to == start], x$to[x$from == start])
+  next_nodes <- next_nodes[next_nodes %in% unique_nodes[valid_nodes]]
+  # print(next_nodes)
+  if (length(next_nodes) == 0) {
+    return(0)
+  } else {
+    return(sum(sapply(next_nodes, num_paths, x = x, visits = visits,valid_nodes = valid_nodes, finish = finish, part = part)))
+  }
 }
-colnames(df) <- c("from","to")
-
-# unique_nodes <- unique(c(df$from,df$to))
-# num_nodes <- length(unique_nodes)
-# 
-# mat <- matrix(0,nrow=num_nodes, ncol=num_nodes)
-# rownames(mat) <- unique_nodes
-# colnames(mat) <- unique_nodes
-# 
-# for(i in 1:nrow(df)){
-#   mat[df$from[i],df$to[i]] <- 1
-#   mat[df$to[i],df$from[i]] <- 1
-# }
-# 
-# current_node <- "start"
-# paths <- 0
 
 
-
-
+num_paths(x, valid_nodes, visits, start, finish, part)
 
 #------------------------------------------------------------------------------------------
 #Part 2
 #------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
+num_paths(x, valid_nodes, visits, start, finish, part=2)
 
