@@ -101,7 +101,7 @@ People use these puzzles for interview prep, learning new languages, coursework,
 
 Some people even just make art from the puzzle text!!! I haven't yet (maybe this year with my nonexistent time?), but it sounds like a fun thing to do.
 
-Sometimes, people compete with each other [(private leaderboards or the global leaderboard!).](https://adventofcode.com/2025/leaderboard/private)
+Sometimes, people compete with each other [(like private leaderboards!).](https://adventofcode.com/2025/leaderboard/private) Apparently, there no longer is a global leaderboard (read Eric's "about" page... wild how people get so competitive).
 
 ## Personal Notes
 
