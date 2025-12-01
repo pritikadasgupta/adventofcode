@@ -2,7 +2,7 @@
 
 These are my solutions to [Advent of Code](https://adventofcode.com/) (2015–Present), an annual Advent calendar of programming puzzles created by Eric Wastl.
 
-**Author:** Golapri Rose Ila Dasgupta (formerly Pritika Dasgupta)
+**Author of these solutions:** Golapri Rose Ila Dasgupta (formerly Pritika Dasgupta)
 
 *Sidenote:* I'll probably just put "GRID" for the author in my scripts since that's my very convenient and cute acronym for myself.
 
@@ -99,7 +99,13 @@ Advent of Code is a cute Christmas-themed series of small programming puzzles fo
 
 People use these puzzles for interview prep, learning new languages, coursework, or just for fun. The creator asks that participants solve puzzles themselves rather than relying on LLMs and generative AI. The point is to learn and grow as a programmer and thinker.
 
+Some people even just make art from the puzzle text!!! I haven't yet (maybe this year with my nonexistent time?), but it sounds like a fun thing to do.
+
 Sometimes, people compete with each other [(private leaderboards or the global leaderboard!).](https://adventofcode.com/2025/leaderboard/private)
+
+## Personal Notes
+
+I used to share my solutions in the Twitter community back in the day, but I no longer use my Twitter. Perhaps I will share on my [Substack](https://drrosedasgupta.substack.com/) or [Bluesky](https://bsky.app/profile/drrosedasgupta.bsky.social). I used to use [Carbon](https://carbon.now.sh/) to make images of my source code so I could post on social media.
 
 As I mentioned earlier, a lot of my previous solutions were in attempts to finish as fast as I could. I often did these with very limited sleep and capacity as I was finishing my PhD at the time. My previous solutions were very hacky (I mean! I did try to edit them when I could, lol).
 
