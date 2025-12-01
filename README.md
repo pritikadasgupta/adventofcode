@@ -3,8 +3,11 @@
 These are my solutions to [Advent of Code](https://adventofcode.com/) (2015–Present), an annual Advent calendar of programming puzzles created by Eric Wastl.
 
 **Author:** Golapri Rose Ila Dasgupta (formerly Pritika Dasgupta)
+
 *Sidenote:* I'll probably just put "GRID" for the author in my scripts since that's my very convenient and cute acronym for myself.
+
 **Collaborators:** I'd rather not have any other collaborators at the moment. This is really a sandbox/playground for me to do a fun coding activity and to learn. Also, I realize that this is an awkwardly intense thing to say, but in the past, my ex helped a bit (if you read this, please do not contribute. And don't talk to me ever again. Thanks.).
+
 **Programming Languages:** R, Python, MATLAB, and whatever I'm learning at the moment
 
 ## What's inside
