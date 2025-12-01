@@ -34,11 +34,11 @@ set.seed(369L)
 #------------------------------------------------------------------------------
 
 required_pkgs <- c(
-  # "readr",
-  # "stringr",
-  # "dplyr",
-  # "purrr",
-  # "tibble"
+  "readr",
+  "stringr",
+  "dplyr",
+  "purrr",
+  "tibble"
   # "ggplot2",
   # "data.table",
   # "janitor",
