@@ -35,7 +35,7 @@ Each puzzle has two parts, earning one ⭐ each. You can see your progress [here
 
 | Year | Stars | Notes |
 |------|-------|-------|
-| 2025 | ⬜ / 24 | Starts Dec 1! (only 12 puzzles starting this year) |
+| 2025 | 2⭐ / 24 | In progress |
 | 2024 | ⬜ / 50 | |
 | 2023 | 2⭐ / 50 | |
 | 2022 | ⬜ / 50 | |
@@ -46,6 +46,8 @@ Each puzzle has two parts, earning one ⭐ each. You can see your progress [here
 | 2017 | ⬜ / 50 | |
 | 2016 | ⬜ / 50 | |
 | 2015 | 41⭐ / 50 | |
+
+(I will revisit the other years when I have time!)
 
 **Total: 155⭐**
 
