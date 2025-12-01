@@ -31,7 +31,7 @@ Each day typically includes the solution script(s) and my puzzle input. I don't 
 
 ## My Progress
 
-Each puzzle has two parts, earning one ⭐ each. You can see your progress [here](https://adventofcode.com/2025/events).
+Each puzzle has two parts, earning one ⭐ each. You can see your progress [here](https://adventofcode.com/2025/events). Here's my progress:
 
 | Year | Stars | Notes |
 |------|-------|-------|
