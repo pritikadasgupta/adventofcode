@@ -5,11 +5,11 @@
 # Project:   Advent of Code (AoC) 2025
 # Author:    GRID
 # Created:   12-01-2025 (MM-DD-YYYY)
-# Purpose:   Solve AoC 2025 Day 1 – <puzzle title>
+# Purpose:   Solve AoC 2025 Day 1 – Secret Entrance
 # Link:      https://adventofcode.com/2025/day/1
 #
 # Usage (CLI, from repo root):
-#   Rscript 2025/Day1/day01.R 2025/Day1/input.txt
+#   Rscript 2025/Day1/day01.R "2025/Day1/input.txt"
 #
 # Usage (interactive, from repo root):
 #   source("2025/Day1/day01.R")
@@ -34,11 +34,11 @@ set.seed(369L)
 #------------------------------------------------------------------------------
 
 required_pkgs <- c(
-  "readr",
-  "stringr",
-  "dplyr",
-  "purrr",
-  "tibble"
+  # "readr",
+  # "stringr",
+  # "dplyr",
+  # "purrr",
+  # "tibble"
   # "ggplot2",
   # "data.table",
   # "janitor",
@@ -112,9 +112,64 @@ parse_input <- function(raw_lines) {
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
+# The actual password is the number of times the dial is left pointing at 0 
+# after any rotation in the sequence.
+
+parse_input <- function(rotation) {
+  first_letter <- substr(rotation, 1, 1)
+  instruction <- as.numeric(gsub("[^0-9.]", "", rotation))
+  if(first_letter == "L"){
+    instruction <- -instruction
+  }
+  return(instruction)
+}
+
+remove_empty_lines <- function(lines){
+  if (length(lines) > 0 && lines[[length(lines)]] == "") {
+    lines_no_empty_end <- lines[[-length(lines)]]
+  } else {
+    lines_no_empty_end <- lines # No empty line at the end to remove
+  }
+  return(lines_no_empty_end)
+}
+
 solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+  dat <- remove_empty_lines(dat) # Remove any empty lines in the txt file
+  dat <- vapply(dat,parse_input,FUN.VALUE = numeric(1),USE.NAMES = FALSE) # Parse input
+  new_dat <- c()
+  for(i in 1:(length(dat))){
+    #for rotations greater than 100
+    multiplier <- ifelse(abs(dat[i]) >= 100,abs(round(dat[i]/100,0)),1)
+    
+    if (i==1) { # The dial starts by pointing at 50
+      dat_sum <- 50 + dat[i]
+      if (dat_sum < 0) {
+        dat_sum <- multiplier*100 + dat_sum
+      }else if (dat_sum > 99) {
+        dat_sum <- dat_sum - multiplier*100
+      }
+      
+      if (dat_sum == 100) {
+        dat_sum <- 0
+      }
+      
+    } else {
+      dat_sum <- dat_sum + dat[i]
+      if (dat_sum < 0) {
+        dat_sum <- multiplier*100 + dat_sum
+      }else if (dat_sum > 99) {
+        dat_sum <- dat_sum - multiplier*100
+      }
+      
+      if (dat_sum == 100) {
+        dat_sum <- 0
+      }
+      
+    }
+    new_dat <- c(new_dat,dat_sum)
+  }
+  number_of_zeroes <- length(which(new_dat == 0))
+  return(number_of_zeroes)
 }
 
 solve_part2 <- function(dat) {
@@ -127,13 +182,11 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day1", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day1", "example.txt"))
+  stopifnot(
+    solve_part1(example_raw) == 3
+    # solve_part2(example_dat) == <expected2>
+  )
   invisible(TRUE)
 }
 
@@ -146,11 +199,8 @@ main <- function(
     verbose = TRUE
 ) {
   if (verbose) log_info("Reading input from: ", input_path)
-  raw <- read_lines(input_path)
-  
-  if (verbose) log_info("Parsing input...")
-  dat <- parse_input(raw)
-  
+  dat <- read_lines(input_path)
+
   if (verbose) log_info("Solving Part 1 …")
   ans1 <- solve_part1(dat)
   

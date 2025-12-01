@@ -78,6 +78,11 @@ read_lines <- function(path) {
 #'
 #' @param x character vector of lines from the input file.
 #' @return list(draws = numeric(), boards = 5 x 5 x n_boards array)
+
+# The actual password is the number of times the dial is left pointing at 0 
+# after any rotation in the sequence.
+
+# The dial starts by pointing at 50.
 parse_input <- function(x) {
   # Drop completely blank lines
   x <- x[x != ""]
