@@ -112,9 +112,7 @@ parse_input <- function(raw_lines) {
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-# The actual password is the number of times the dial is left pointing at 0 
-# after any rotation in the sequence.
-
+# Helper functions
 parse_input <- function(rotation) {
   first_letter <- substr(rotation, 1, 1)
   instruction <- as.numeric(gsub("[^0-9.]", "", rotation))
@@ -133,49 +131,65 @@ remove_empty_lines <- function(lines){
   return(lines_no_empty_end)
 }
 
+# Part 1 - refined from initial attempt!
+# The actual password is the number of times the dial is left pointing at 0 
+# after any rotation in the sequence.
+# Lock is from 0 to 99
 solve_part1 <- function(dat) {
-  dat <- remove_empty_lines(dat) # Remove any empty lines in the txt file
-  dat <- vapply(dat,parse_input,FUN.VALUE = numeric(1),USE.NAMES = FALSE) # Parse input
-  new_dat <- c()
-  for(i in 1:(length(dat))){
-    #for rotations greater than 100
-    multiplier <- ifelse(abs(dat[i]) >= 100,abs(round(dat[i]/100,0)),1)
-    
-    if (i==1) { # The dial starts by pointing at 50
-      dat_sum <- 50 + dat[i]
-      if (dat_sum < 0) {
-        dat_sum <- multiplier*100 + dat_sum
-      }else if (dat_sum > 99) {
-        dat_sum <- dat_sum - multiplier*100
-      }
-      
-      if (dat_sum == 100) {
-        dat_sum <- 0
-      }
-      
-    } else {
-      dat_sum <- dat_sum + dat[i]
-      if (dat_sum < 0) {
-        dat_sum <- multiplier*100 + dat_sum
-      }else if (dat_sum > 99) {
-        dat_sum <- dat_sum - multiplier*100
-      }
-      
-      if (dat_sum == 100) {
-        dat_sum <- 0
-      }
-      
+  dat <- remove_empty_lines(dat)
+  dat <- vapply(dat, parse_input, FUN.VALUE = numeric(1), USE.NAMES = FALSE)
+  
+  position <- 50  # Dial starts at 50
+  zero_count <- 0
+  
+  for (rotation in dat) {
+    position <- ((position + rotation) %% 100 + 100) %% 100  # Normalize to 0-99
+    if (position == 0) {
+      zero_count <- zero_count + 1
     }
-    new_dat <- c(new_dat,dat_sum)
   }
-  number_of_zeroes <- length(which(new_dat == 0))
-  return(number_of_zeroes)
+  
+  return(zero_count)
 }
 
+# Part 2
+# Trying to see how many times it passes 0 or lands on 0
 solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+  dat <- remove_empty_lines(dat)
+  dat <- vapply(dat, parse_input, FUN.VALUE = numeric(1), USE.NAMES = FALSE)
+  
+  position <- 50
+  total_clicks <- 0
+  
+  for (rotation in dat) {
+    old_pos <- position
+    new_pos <- old_pos + rotation  # Unwrapped position
+    
+    if (rotation > 0) {
+      # Moving right, count times we hit multiples of 100s
+      clicks <- floor(new_pos / 100)
+    } else if (rotation < 0) {
+      # Moving left, count times we hit 0 and multiples of -100s
+      if (old_pos > 0 && new_pos <= 0) {
+        # Crossed through 0, plus any additional wraps
+        clicks <- 1 + floor(abs(new_pos) / 100)
+      } else if (old_pos == 0) {
+        # Started at 0, but only counting additional full wraps
+        clicks <- floor(abs(new_pos) / 100)
+      } else {
+        clicks <- 0
+      }
+    } else {
+      clicks <- 0
+    }
+    
+    total_clicks <- total_clicks + clicks
+    position <- ((new_pos %% 100) + 100) %% 100  # Normalize to 0-99
+  }
+  
+  return(total_clicks)
 }
+
 
 #------------------------------------------------------------------------------
 # Quick checks / examples
@@ -184,8 +198,8 @@ solve_part2 <- function(dat) {
 run_checks <- function() {
   example_raw <- read_lines(here("2025", "Day1", "example.txt"))
   stopifnot(
-    solve_part1(example_raw) == 3
-    # solve_part2(example_dat) == <expected2>
+    solve_part1(example_raw) == 3,
+    solve_part2(example_raw) == 6
   )
   invisible(TRUE)
 }
