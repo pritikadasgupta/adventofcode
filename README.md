@@ -35,7 +35,7 @@ Each puzzle has two parts, earning one ⭐ each. You can see your progress [here
 
 | Year | Stars | Notes |
 |------|-------|-------|
-| 2025 | 2⭐ / 24 | In progress |
+| 2025 | 4⭐ / 24 | In progress |
 | 2024 | ⬜ / 50 | |
 | 2023 | 2⭐ / 50 | |
 | 2022 | ⬜ / 50 | |
@@ -49,7 +49,7 @@ Each puzzle has two parts, earning one ⭐ each. You can see your progress [here
 
 (I will revisit the other years when I have time!)
 
-**Total: 155⭐**
+**Total: 159⭐**
 
 ## Running the R solutions
 

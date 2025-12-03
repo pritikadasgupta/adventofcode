@@ -5,7 +5,7 @@
 # Project:   Advent of Code (AoC) 2025
 # Author:    GRID
 # Created:   12-01-2025 (MM-DD-YYYY)
-# Purpose:   Solve AoC 2025 Day 2 – <puzzle title>
+# Purpose:   Solve AoC 2025 Day 2 – Gift Shop
 # Link:      https://adventofcode.com/2025/day/2
 #
 # Usage (CLI, from repo root):
@@ -102,10 +102,11 @@ read_lines <- function(path) {
 # Parsing / Pre-processing
 #------------------------------------------------------------------------------
 
-# Turn raw lines into a structured object (tibble, list, etc.)
+# Turn raw line into a structured object (list)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  split_comma_lines <- strsplit(raw_lines, ",")[[1]]
+  split_hyphen_lines <- strsplit(split_comma_lines, "-")
+  return(split_hyphen_lines)
 }
 
 #------------------------------------------------------------------------------
@@ -113,27 +114,73 @@ parse_input <- function(raw_lines) {
 #------------------------------------------------------------------------------
 
 solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+  invalid_ids <- c()
+  # Find numbers within the range
+
+  for (i in 1:length(dat)){
+    lower_bound <- as.numeric(dat[[i]][1])
+    upper_bound <- as.numeric(dat[[i]][2])
+    id_range <- seq.int(lower_bound, upper_bound)
+    
+    # Find invalid IDs: IDs cannot ONLY be made of of some 
+    # sequence of digits repeated twice
+    # Find invalid IDs: IDs cannot have leading zeroes
+    
+    # ^ - start of string
+    # (.+) — capture group: one or more characters (the first half)
+    # \\1 — backreference: must match exactly what was captured
+    # $ — end of string
+    # reference: I used https://regexr.com/ to help me test!
+
+    numbers_with_consecutive_repeats <- id_range[grepl("^(.+)\\1$", id_range)]
+    
+    invalid_ids <- c(invalid_ids,numbers_with_consecutive_repeats)
+    # print(numbers_with_consecutive_repeats)
+  }
+  # Sum of Invalid IDs
+  sum(invalid_ids)
 }
 
 solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+  invalid_ids <- c()
+  
+  # Find numbers within the range
+  for (i in 1:length(dat)){
+    lower_bound <- as.numeric(dat[[i]][1])
+    upper_bound <- as.numeric(dat[[i]][2])
+    id_range <- seq.int(lower_bound, upper_bound)
+    
+    # Find invalid IDs: ID is invalid if it is made only of some 
+    # sequence of digits repeated at least twice.
+    
+    # ^ — start of string
+    # (.+) — capture group of one or more characters
+    # \\1+ — if the backreference repeated one or more times 
+    # (so if the pattern appears 2+ times total)
+    # $ — end of string
+
+    numbers_with_consecutive_repeats <- id_range[grepl("^(.+)\\1+$", id_range)]
+    
+    invalid_ids <- c(invalid_ids,numbers_with_consecutive_repeats)
+    print(numbers_with_consecutive_repeats)
+  }
+  # Sum of Invalid IDs
+  sum(invalid_ids)
+
 }
 
 #------------------------------------------------------------------------------
-# Quick checks / examples
+# Run and check example input
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day2", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day2", "example.txt"))
+  example_dat <- parse_input(example_raw)
+
+  stopifnot(
+    solve_part1(example_dat) == 1227775554,
+    solve_part2(example_dat) == 4174379265
+  )
   invisible(TRUE)
 }
 
