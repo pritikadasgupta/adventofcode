@@ -102,17 +102,6 @@ read_lines <- function(path) {
 # Parsing / Pre-processing
 #------------------------------------------------------------------------------
 
-# Turn raw lines into a structured object (tibble, list, etc.)
-parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
-}
-
-#------------------------------------------------------------------------------
-# Core Logic / Solvers
-#------------------------------------------------------------------------------
-
-# Helper functions
 parse_input <- function(rotation) {
   first_letter <- substr(rotation, 1, 1)
   instruction <- as.numeric(gsub("[^0-9.]", "", rotation))
@@ -122,6 +111,7 @@ parse_input <- function(rotation) {
   return(instruction)
 }
 
+# Helper function
 remove_empty_lines <- function(lines){
   if (length(lines) > 0 && lines[[length(lines)]] == "") {
     lines_no_empty_end <- lines[[-length(lines)]]
@@ -130,6 +120,10 @@ remove_empty_lines <- function(lines){
   }
   return(lines_no_empty_end)
 }
+
+#------------------------------------------------------------------------------
+# Core Logic / Solvers
+#------------------------------------------------------------------------------
 
 # Part 1 - refined from initial attempt!
 # The actual password is the number of times the dial is left pointing at 0 
