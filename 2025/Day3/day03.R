@@ -98,6 +98,34 @@ read_lines <- function(path) {
   readr::read_lines(path)
 }
 
+solve_bank <- function(dat, k) {
+  my_joltages <- c()
+  
+  for (i in 1:ncol(dat)) {
+    bank <- dat[, i]
+    n <- length(bank)
+    
+    selected_digits <- c()
+    start_idx <- 1
+    
+    for (pos in 1:k) {
+      end_idx <- n - k + pos
+      search_range <- start_idx:end_idx
+      
+      largest_number <- max(bank[search_range])
+      largest_number_index <- start_idx + which(bank[search_range] == largest_number)[1] - 1
+      
+      selected_digits <- c(selected_digits, largest_number)
+      start_idx <- largest_number_index + 1
+    }
+    
+    largest_joltage <- as.numeric(paste(selected_digits, collapse = ""))
+    my_joltages <- c(my_joltages, largest_joltage)
+  }
+  
+  sum(my_joltages)
+}
+
 #------------------------------------------------------------------------------
 # Parsing / Pre-processing
 #------------------------------------------------------------------------------
@@ -110,63 +138,9 @@ parse_input <- function(raw_lines) {
 #------------------------------------------------------------------------------
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
-solve_part1 <- function(dat) {
-  my_joltages <- c()
-  
-  for (i in 1:ncol(dat)) {
-    bank <- dat[, i]
-    n <- length(bank)
-    k <- 2  # need to pick 2 digits
-    
-    selected_digits <- c()
-    start_idx <- 1
-    
-    for (pos in 1:k) {
-      end_idx <- n - k + pos
-      search_range <- start_idx:end_idx
-      
-      largest_number <- max(bank[search_range])
-      largest_number_index <- start_idx + which(bank[search_range] == largest_number)[1] - 1
-      
-      selected_digits <- c(selected_digits, largest_number)
-      start_idx <- largest_number_index + 1
-    }
-    
-    largest_joltage <- as.numeric(paste(selected_digits, collapse = ""))
-    my_joltages <- c(my_joltages, largest_joltage)
-  }
-  
-  sum(my_joltages)
-}
 
-solve_part2 <- function(dat) {
-  my_joltages <- c()
-  
-  for (i in 1:ncol(dat)) {
-    bank <- dat[, i]
-    n <- length(bank)
-    k <- 12  # need to pick 12 digits
-    
-    selected_digits <- c()
-    start_idx <- 1
-    
-    for (pos in 1:k) {
-      end_idx <- n - k + pos
-      search_range <- start_idx:end_idx
-      
-      largest_number <- max(bank[search_range])
-      largest_number_index <- start_idx + which(bank[search_range] == largest_number)[1] - 1
-      
-      selected_digits <- c(selected_digits, largest_number)
-      start_idx <- largest_number_index + 1
-    }
-    
-    largest_joltage <- as.numeric(paste(selected_digits, collapse = ""))
-    my_joltages <- c(my_joltages, largest_joltage)
-  }
-  
-  sum(my_joltages)
-}
+solve_part1 <- function(dat) solve_bank(dat, k = 2)
+solve_part2 <- function(dat) solve_bank(dat, k = 12)
 
 #------------------------------------------------------------------------------
 # Quick checks / examples
