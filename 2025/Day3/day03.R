@@ -5,7 +5,7 @@
 # Project:   Advent of Code (AoC) 2025
 # Author:    GRID
 # Created:   12-01-2025 (MM-DD-YYYY)
-# Purpose:   Solve AoC 2025 Day 3 – <puzzle title>
+# Purpose:   Solve AoC 2025 Day 3 – Lobby
 # Link:      https://adventofcode.com/2025/day/3
 #
 # Usage (CLI, from repo root):
@@ -104,8 +104,7 @@ read_lines <- function(path) {
 
 # Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  split_lines <- sapply(strsplit(raw_lines, ""),as.numeric)
 }
 
 #------------------------------------------------------------------------------
@@ -114,12 +113,50 @@ parse_input <- function(raw_lines) {
 
 solve_part1 <- function(dat) {
   # answer for Part 1
-  NA_real_  # replace with actual logic
+  my_joltages <- c()
+  for(i in 1:ncol(dat)){
+    forward_dat <- dat[1:(length(dat[,i])-1),i]
+    largest_number <- max(forward_dat)
+    largest_number_index <- which(dat[,i]==largest_number)
+    
+    backward_dat <- dat[(largest_number_index+1):length(dat[,i]),i]
+    
+    largest_number2 <- max(backward_dat)
+    largest_number2_index <- which(dat[,i]==largest_number2)
+    
+    largest_joltage <- as.numeric(paste0(largest_number,largest_number2))
+    my_joltages <- c(my_joltages,largest_joltage)
+  }
+  sum(my_joltages)
 }
 
 solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+  my_joltages <- c()
+  
+  for (i in 1:ncol(dat)) {
+    bank <- dat[, i]
+    n <- length(bank)
+    k <- 12  # need to pick 12 digits
+    
+    selected_digits <- c()
+    start_idx <- 1
+    
+    for (pos in 1:k) {
+      end_idx <- n - k + pos
+      search_range <- start_idx:end_idx
+      
+      largest_number <- max(bank[search_range])
+      largest_number_index <- start_idx + which(bank[search_range] == largest_number)[1] - 1
+      
+      selected_digits <- c(selected_digits, largest_number)
+      start_idx <- largest_number_index + 1
+    }
+    
+    largest_joltage <- as.numeric(paste(selected_digits, collapse = ""))
+    my_joltages <- c(my_joltages, largest_joltage)
+  }
+  
+  sum(my_joltages)
 }
 
 #------------------------------------------------------------------------------
@@ -127,13 +164,13 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day3", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day3", "example.txt"))
+  example_dat <- parse_input(example_raw)
+
+  stopifnot(
+    solve_part1(example_dat) == 357,
+    solve_part2(example_dat) == 3121910778619
+  )
   invisible(TRUE)
 }
 
