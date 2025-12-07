@@ -110,23 +110,32 @@ parse_input <- function(raw_lines) {
 #------------------------------------------------------------------------------
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
-
 solve_part1 <- function(dat) {
-  # answer for Part 1
   my_joltages <- c()
-  for(i in 1:ncol(dat)){
-    forward_dat <- dat[1:(length(dat[,i])-1),i]
-    largest_number <- max(forward_dat)
-    largest_number_index <- which(dat[,i]==largest_number)
+  
+  for (i in 1:ncol(dat)) {
+    bank <- dat[, i]
+    n <- length(bank)
+    k <- 2  # need to pick 2 digits
     
-    backward_dat <- dat[(largest_number_index+1):length(dat[,i]),i]
+    selected_digits <- c()
+    start_idx <- 1
     
-    largest_number2 <- max(backward_dat)
-    largest_number2_index <- which(dat[,i]==largest_number2)
+    for (pos in 1:k) {
+      end_idx <- n - k + pos
+      search_range <- start_idx:end_idx
+      
+      largest_number <- max(bank[search_range])
+      largest_number_index <- start_idx + which(bank[search_range] == largest_number)[1] - 1
+      
+      selected_digits <- c(selected_digits, largest_number)
+      start_idx <- largest_number_index + 1
+    }
     
-    largest_joltage <- as.numeric(paste0(largest_number,largest_number2))
-    my_joltages <- c(my_joltages,largest_joltage)
+    largest_joltage <- as.numeric(paste(selected_digits, collapse = ""))
+    my_joltages <- c(my_joltages, largest_joltage)
   }
+  
   sum(my_joltages)
 }
 
