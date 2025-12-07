@@ -5,7 +5,8 @@
 # Project:   Advent of Code (AoC) 2025
 # Author:    GRID
 # Created:   12-01-2025 (MM-DD-YYYY)
-# Purpose:   Solve AoC 2025 Day 4 – <puzzle title>
+# Finished:  12-07-2025
+# Purpose:   Solve AoC 2025 Day 4 – Printing Department
 # Link:      https://adventofcode.com/2025/day/4
 #
 # Usage (CLI, from repo root):
@@ -112,9 +113,40 @@ parse_input <- function(raw_lines) {
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+solve_part1 <- function(grid) {
+  nrow_g <- nrow(grid)
+  ncol_g <- ncol(grid)
+  
+  # 8 directions: all combinations of -1, 0, 1 except (0,0)
+  directions <- expand.grid(dr = -1:1, dc = -1:1)
+  directions <- directions[!(directions$dr == 0 & directions$dc == 0), ]
+  
+  count <- 0
+  
+  for (r in seq_len(nrow_g)) {
+    for (c in seq_len(ncol_g)) {
+      if (grid[r, c] == "@") {
+        # Count adjacent @ symbols
+        adjacent <- 0
+        for (i in seq_len(nrow(directions))) {
+          nr <- r + directions$dr[i]
+          nc <- c + directions$dc[i]
+          # Check bounds
+          if (nr >= 1 && nr <= nrow_g && nc >= 1 && nc <= ncol_g) {
+            if (grid[nr, nc] == "@") {
+              adjacent <- adjacent + 1
+            }
+          }
+        }
+        # Accessible if fewer than 4 neighbors
+        if (adjacent < 4) {
+          count <- count + 1
+        }
+      }
+    }
+  }
+  
+  count
 }
 
 solve_part2 <- function(dat) {
@@ -127,13 +159,13 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day4", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day4", "example.txt"))
+  example_dat <- parse_input(example_raw)
+
+  stopifnot(
+    solve_part1(example_dat) == 13
+    # solve_part2(example_dat) == <expected2>
+  )
   invisible(TRUE)
 }
 
