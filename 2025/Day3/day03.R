@@ -4,7 +4,8 @@
 # Script:    day03.R
 # Project:   Advent of Code (AoC) 2025
 # Author:    GRID
-# Created:   12-01-2025 (MM-DD-YYYY)
+# Created:   12-03-2025 (MM-DD-YYYY)
+# Finished:  12-07-2025
 # Purpose:   Solve AoC 2025 Day 3 – Lobby
 # Link:      https://adventofcode.com/2025/day/3
 #
