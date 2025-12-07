@@ -103,10 +103,9 @@ read_lines <- function(path) {
 # Parsing / Pre-processing
 #------------------------------------------------------------------------------
 
-# Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  # Convert lines into a character matrix!!
+  do.call(rbind, strsplit(raw_lines, ""))
 }
 
 #------------------------------------------------------------------------------
@@ -149,9 +148,58 @@ solve_part1 <- function(grid) {
   count
 }
 
-solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+solve_part2 <- function(grid) {
+  nrow_g <- nrow(grid)
+  ncol_g <- ncol(grid)
+  
+  # 8 directions
+  
+  directions <- expand.grid(dr = -1:1, dc = -1:1)
+  directions <- directions[!(directions$dr == 0 & directions$dc == 0), ]
+  
+  # Helper to count adjacent @ symbols
+  count_adjacent <- function(grid, r, c) {
+    adjacent <- 0
+    for (i in seq_len(nrow(directions))) {
+      nr <- r + directions$dr[i]
+      nc <- c + directions$dc[i]
+      if (nr >= 1 && nr <= nrow_g && nc >= 1 && nc <= ncol_g) {
+        if (grid[nr, nc] == "@") {
+          adjacent <- adjacent + 1
+        }
+      }
+    }
+    adjacent
+  }
+  
+  total_removed <- 0
+  
+  repeat {
+    # Find all accessible rolls this round
+    to_remove <- list()
+    
+    for (r in seq_len(nrow_g)) {
+      for (c in seq_len(ncol_g)) {
+        if (grid[r, c] == "@") {
+          if (count_adjacent(grid, r, c) < 4) {
+            to_remove <- c(to_remove, list(c(r, c)))
+          }
+        }
+      }
+    }
+    
+    # If nothing to remove, we're done
+    if (length(to_remove) == 0) break
+    
+    # Remove all accessible rolls at once
+    for (pos in to_remove) {
+      grid[pos[1], pos[2]] <- "."
+    }
+    
+    total_removed <- total_removed + length(to_remove)
+  }
+  
+  total_removed
 }
 
 #------------------------------------------------------------------------------
@@ -163,8 +211,8 @@ run_checks <- function() {
   example_dat <- parse_input(example_raw)
 
   stopifnot(
-    solve_part1(example_dat) == 13
-    # solve_part2(example_dat) == <expected2>
+    solve_part1(example_dat) == 13,
+    solve_part2(example_dat) == 43
   )
   invisible(TRUE)
 }
