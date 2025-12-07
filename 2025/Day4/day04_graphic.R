@@ -107,49 +107,57 @@ create_day4_graphic <- function(
          col = accent_color, cex = 0.55, family = "jetbrains", font = 2)
   }
   
-  # Improved forklift icon - more recognizable
-  draw_forklift <- function(x, y, size = 0.5) {
+  # Forklift icon - side view facing right
+  draw_forklift <- function(x, y, size = 1.0) {
+    s <- size * 0.5  # scale factor
+    
+    # Ground line reference: y is the ground level
+    ground <- y - s * 0.4
+    
+    # Wheels (circles at ground level)
+    # Back wheel (larger)
+    symbols(x - s*0.5, ground + s*0.15, circles = s*0.15, 
+            inches = FALSE, add = TRUE, bg = colors$wheel_dark, fg = colors$metal, lwd = 2)
+    # Front wheel (smaller)
+    symbols(x + s*0.2, ground + s*0.12, circles = s*0.12, 
+            inches = FALSE, add = TRUE, bg = colors$wheel_dark, fg = colors$metal, lwd = 2)
+    
+    # Chassis (connects wheels)
+    rect(x - s*0.6, ground + s*0.15, x + s*0.25, ground + s*0.28,
+         col = colors$forklift_org, border = "#c96a28", lwd = 1)
+    
     # Main cab body
-    rect(x - size*0.5, y - size*0.15, x + size*0.15, y + size*0.45,
+    rect(x - s*0.55, ground + s*0.28, x + s*0.05, ground + s*0.75,
          col = colors$forklift_org, border = "#c96a28", lwd = 2)
     
-    # Cab roof/overhead guard
-    rect(x - size*0.45, y + size*0.45, x + size*0.1, y + size*0.55,
-         col = colors$forklift_org, border = "#c96a28", lwd = 1.5)
-    
-    # Vertical mast
-    rect(x + size*0.15, y - size*0.25, x + size*0.28, y + size*0.6,
-         col = colors$metal, border = "#6e7681", lwd = 1.5)
-    
-    # Fork carriage (horizontal bar)
-    rect(x + size*0.15, y + size*0.05, x + size*0.35, y + size*0.15,
-         col = "#6e7681", border = NA)
-    
-    # Forks (two prongs)
-    rect(x + size*0.28, y - size*0.05, x + size*0.75, y + size*0.02,
-         col = colors$metal, border = "#6e7681", lwd = 1)
-    rect(x + size*0.28, y + size*0.18, x + size*0.75, y + size*0.25,
-         col = colors$metal, border = "#6e7681", lwd = 1)
-    
-    # Back wheel (larger)
-    rect(x - size*0.45, y - size*0.35, x - size*0.15, y - size*0.15,
-         col = colors$wheel_dark, border = colors$text_dim, lwd = 2)
-    # Back wheel hub
-    points(x - size*0.30, y - size*0.25, pch = 19, col = colors$text_dim, cex = 0.8)
-    
-    # Front wheel (smaller)
-    rect(x - size*0.05, y - size*0.30, x + size*0.12, y - size*0.15,
-         col = colors$wheel_dark, border = colors$text_dim, lwd = 2)
-    # Front wheel hub
-    points(x + size*0.035, y - size*0.225, pch = 19, col = colors$text_dim, cex = 0.6)
+    # Cab roof / overhead guard
+    segments(x - s*0.55, ground + s*0.75, x + s*0.15, ground + s*0.75,
+             col = "#c96a28", lwd = 3)
+    # Roof supports
+    segments(x + s*0.1, ground + s*0.28, x + s*0.1, ground + s*0.75,
+             col = "#c96a28", lwd = 2)
     
     # Counterweight at back
-    rect(x - size*0.55, y - size*0.10, x - size*0.50, y + size*0.35,
+    rect(x - s*0.7, ground + s*0.2, x - s*0.55, ground + s*0.55,
          col = "#c96a28", border = NA)
+    
+    # Mast (vertical) - in front of cab
+    rect(x + s*0.2, ground + s*0.1, x + s*0.32, ground + s*0.9,
+         col = colors$metal, border = "#6e7681", lwd = 1.5)
+    
+    # Forks (two horizontal prongs extending right)
+    rect(x + s*0.32, ground + s*0.08, x + s*0.9, ground + s*0.14,
+         col = colors$metal, border = "#6e7681", lwd = 1)
+    rect(x + s*0.32, ground + s*0.28, x + s*0.9, ground + s*0.34,
+         col = colors$metal, border = "#6e7681", lwd = 1)
+    
+    # Fork backrest (vertical bar behind forks)
+    rect(x + s*0.28, ground + s*0.05, x + s*0.35, ground + s*0.45,
+         col = "#6e7681", border = NA)
   }
   
   # Forklift decoration
-  draw_forklift(8.7, 8.85, size = 0.7)
+  draw_forklift(8.8, 9.0, size = 1.0)
   
   # HEADER
   text(0.5, 9.1, "advent of code 2025", 
@@ -232,21 +240,30 @@ x.x.@@@.x."
          col = colors$metal, lwd = 2, length = 0.1)
   text(arrow_x, grid_cy + 0.25, "repeat", col = colors$text_dim, cex = 0.55, family = "atkinson")
   
-  # Legend - centered at bottom
+  # Legend - centered at bottom with better spacing
   legend_cx <- 5.0
-  legend_w <- 2.4
-  rect(legend_cx - legend_w, 0.65, legend_cx + legend_w, 1.45, 
+  legend_w <- 2.3
+  legend_bottom <- 0.55
+  legend_top <- 1.55
+  
+  rect(legend_cx - legend_w, legend_bottom, legend_cx + legend_w, legend_top, 
        col = colors$panel, border = colors$metal, lwd = 1)
-  text(legend_cx - legend_w + 0.2, 1.25, "legend:", col = colors$text_dim, cex = 0.6, 
+  
+  # Legend title - centered at top with padding
+  text(legend_cx, legend_top - 0.2, "legend", col = colors$text_dim, cex = 0.6, 
        family = "montserrat", font = 2)
   
-  # Legend items - evenly spaced
-  points(legend_cx - 1.6, 0.95, pch = 19, col = colors$paper_white, cex = 1.2)
-  text(legend_cx - 1.35, 0.95, "blocked (≥4 neighbors)", col = colors$text_main, 
+  # Legend items - centered row below title
+  item_y <- legend_bottom + 0.35
+  
+  # Blocked item (left side)
+  points(legend_cx - 1.5, item_y, pch = 19, col = colors$paper_white, cex = 1.2)
+  text(legend_cx - 1.25, item_y, "blocked (≥4 neighbors)", col = colors$text_main, 
        cex = 0.55, adj = 0, family = "atkinson")
   
-  points(legend_cx + 0.5, 0.95, pch = 19, col = colors$access_green, cex = 1.2)
-  text(legend_cx + 0.75, 0.95, "accessible (<4)", col = colors$text_main, 
+  # Accessible item (right side)
+  points(legend_cx + 0.6, item_y, pch = 19, col = colors$access_green, cex = 1.2)
+  text(legend_cx + 0.85, item_y, "accessible (<4)", col = colors$text_main, 
        cex = 0.55, adj = 0, family = "atkinson")
   
   # FOOTER
