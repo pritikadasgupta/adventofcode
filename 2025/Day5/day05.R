@@ -39,10 +39,6 @@ required_pkgs <- c(
   "dplyr",
   "purrr",
   "tibble"
-  # "ggplot2",
-  # "data.table",
-  # "janitor",
-  # "glue"
 )
 
 missing_pkgs <- setdiff(required_pkgs, rownames(installed.packages()))
@@ -102,19 +98,27 @@ read_lines <- function(path) {
 # Parsing / Pre-processing
 #------------------------------------------------------------------------------
 
-# Turn raw lines into a structured object (tibble, list, etc.)
-parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
-}
-
 #------------------------------------------------------------------------------
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+solve_part1 <- function(lines) {
+  # Read and split by blank line
+  blank <- which(lines == "")
+  
+  # Parse ranges (before blank line)
+  range_lines <- lines[1:(blank - 1)]
+  ranges <- do.call(rbind, lapply(strsplit(range_lines, "-"), as.numeric))
+  
+  # Parse available IDs (after blank line)
+  ids <- as.numeric(lines[(blank + 1):length(lines)])
+  
+  # Check each ID against all ranges
+  is_fresh <- sapply(ids, function(id) {
+    any(id >= ranges[, 1] & id <= ranges[, 2])
+  })
+  
+  sum(is_fresh)
 }
 
 solve_part2 <- function(dat) {
@@ -127,13 +131,13 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day5", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- readLines(here("2025", "Day5", "example.txt"))
+  example_dat <- example_raw
+
+  stopifnot(
+    solve_part1(example_dat) == 3
+    # solve_part2(example_dat) == <expected2>
+  )
   invisible(TRUE)
 }
 
@@ -148,14 +152,11 @@ main <- function(
   if (verbose) log_info("Reading input from: ", input_path)
   raw <- read_lines(input_path)
   
-  if (verbose) log_info("Parsing input...")
-  dat <- parse_input(raw)
-  
   if (verbose) log_info("Solving Part 1 …")
-  ans1 <- solve_part1(dat)
+  ans1 <- solve_part1(raw)  # Pass raw directly, not dat
   
   if (verbose) log_info("Solving Part 2 …")
-  ans2 <- solve_part2(dat)
+  ans2 <- solve_part2(raw)
   
   if (verbose) {
     log_info("Part 1 result: ", ans1)
