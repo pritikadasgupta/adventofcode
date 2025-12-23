@@ -109,7 +109,7 @@ parse_input <- function(raw_lines) {
   
   i <- 1
   # Parse shapes
-  while (i <= length(raw_lines) && grepl("^\\d+:$", raw_lines[i])) {
+  while (i <= length(raw_lines) && grepl("^\\d+:", raw_lines[i])) {
     shape_id <- as.integer(gsub(":", "", raw_lines[i]))
     i <- i + 1
     shape_rows <- c()
@@ -117,7 +117,6 @@ parse_input <- function(raw_lines) {
       shape_rows <- c(shape_rows, raw_lines[i])
       i <- i + 1
     }
-    # Convert to matrix of coordinates
     shapes[[shape_id + 1]] <- parse_shape(shape_rows)
     while (i <= length(raw_lines) && raw_lines[i] == "") i <- i + 1
   }
@@ -148,88 +147,122 @@ parse_shape <- function(rows) {
       }
     }
   }
-  # Normalize to origin
   coords[,1] <- coords[,1] - min(coords[,1])
   coords[,2] <- coords[,2] - min(coords[,2])
   coords
 }
 
-get_rotations_flips <- function(shape) {
+# Precompute all unique orientations for a shape
+get_all_orientations <- function(shape) {
   orientations <- list()
+  seen <- character()
   s <- shape
+  
   for (flip in 1:2) {
     for (rot in 1:4) {
-      # Normalize
+      # Normalize to origin
       s[,1] <- s[,1] - min(s[,1])
       s[,2] <- s[,2] - min(s[,2])
-      # Add unique orientation
-      key <- paste(s[order(s[,1], s[,2]),], collapse = ",")
-      if (!key %in% names(orientations)) {
-        orientations[[key]] <- s
+      # Sort for consistent key
+      ord <- order(s[,1], s[,2])
+      s_sorted <- s[ord, , drop = FALSE]
+      key <- paste(s_sorted, collapse = ",")
+      
+      if (!key %in% seen) {
+        seen <- c(seen, key)
+        orientations[[length(orientations) + 1]] <- s_sorted
       }
-      # Rotate 90 degrees: (r,c) -> (c, -r)
+      # Rotate 90°: (r,c) -> (c, -r)
       s <- cbind(s[,2], -s[,1])
     }
-    # Flip: (r,c) -> (r, -c)
+    # Flip horizontally
     s <- cbind(shape[,1], -shape[,2])
   }
   orientations
 }
 
-can_place <- function(grid, shape, start_r, start_c) {
-  for (i in 1:nrow(shape)) {
-    r <- start_r + shape[i, 1]
-    c <- start_c + shape[i, 2]
-    if (r < 1 || r > nrow(grid) || c < 1 || c > ncol(grid)) return(FALSE)
-    if (grid[r, c] != 0) return(FALSE)
+# Precompute valid placements for each orientation at each starting position
+precompute_placements <- function(orientations, height, width) {
+  placements <- list()
+  
+  for (orient in orientations) {
+    max_r <- max(orient[,1])
+    max_c <- max(orient[,2])
+    
+    for (start_r in 0:(height - 1 - max_r)) {
+      for (start_c in 0:(width - 1 - max_c)) {
+        # Convert to grid indices (cells covered)
+        cells <- orient
+        cells[,1] <- cells[,1] + start_r
+        cells[,2] <- cells[,2] + start_c
+        # Convert to single indices for faster lookup
+        indices <- cells[,1] * width + cells[,2] + 1
+        placements[[length(placements) + 1]] <- sort(indices)
+      }
+    }
   }
-  TRUE
-}
-
-place_shape <- function(grid, shape, start_r, start_c, id) {
-  for (i in 1:nrow(shape)) {
-    r <- start_r + shape[i, 1]
-    c <- start_c + shape[i, 2]
-    grid[r, c] <- id
-  }
-  grid
+  
+  # Remove duplicates
+  unique(placements)
 }
 
 solve_region <- function(shapes, region) {
   width <- region$width
   height <- region$height
   counts <- region$counts
+  total_cells <- width * height
   
-  # Build list of pieces to place
+  # Build list of pieces with precomputed placements
   pieces <- list()
+  total_shape_cells <- 0
+  
   for (shape_idx in seq_along(counts)) {
-    for (k in seq_len(counts[shape_idx])) {
-      pieces[[length(pieces) + 1]] <- shapes[[shape_idx]]
+    if (counts[shape_idx] > 0) {
+      orientations <- get_all_orientations(shapes[[shape_idx]])
+      placements <- precompute_placements(orientations, height, width)
+      shape_size <- nrow(shapes[[shape_idx]])
+      total_shape_cells <- total_shape_cells + counts[shape_idx] * shape_size
+      
+      for (k in seq_len(counts[shape_idx])) {
+        pieces[[length(pieces) + 1]] <- list(
+          placements = placements,
+          size = shape_size
+        )
+      }
     }
   }
   
   if (length(pieces) == 0) return(TRUE)
   
-  grid <- matrix(0, nrow = height, ncol = width)
+  # Early pruning: if total cells needed > available, impossible
+  if (total_shape_cells > total_cells) return(FALSE)
   
-  # Backtracking
+  # Sort pieces by fewest placements first (most constrained)
+  pieces <- pieces[order(sapply(pieces, function(p) length(p$placements)))]
+  
+  # Grid as logical vector for speed
+  grid <- rep(FALSE, total_cells)
+  
+  # Backtracking WITHOUT first-empty-cell heuristic
+  # (shapes don't need to tile perfectly)
   solve_backtrack <- function(piece_idx) {
     if (piece_idx > length(pieces)) return(TRUE)
     
-    shape <- pieces[[piece_idx]]
-    orientations <- get_rotations_flips(shape)
+    piece <- pieces[[piece_idx]]
     
-    for (orient in orientations) {
-      for (r in 1:height) {
-        for (c in 1:width) {
-          if (can_place(grid, orient, r, c)) {
-            grid <<- place_shape(grid, orient, r, c, piece_idx)
-            if (solve_backtrack(piece_idx + 1)) return(TRUE)
-            grid <<- place_shape(grid, orient, r, c, 0)  # Undo
-          }
-        }
-      }
+    for (placement in piece$placements) {
+      # Check if all cells are free
+      if (any(grid[placement])) next
+      
+      # Place piece
+      grid[placement] <<- TRUE
+      
+      if (solve_backtrack(piece_idx + 1)) return(TRUE)
+      
+      # Remove piece
+      grid[placement] <<- FALSE
     }
+    
     FALSE
   }
   
@@ -240,9 +273,10 @@ solve_region <- function(shapes, region) {
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-solve_part1 <- function(dat) { #probably very computationally intensive
-  sum(sapply(dat$regions, function(region) {
-    if (solve_region(dat$shapes, region)) 1 else 0
+solve_part1 <- function(dat) {
+  sum(sapply(seq_along(dat$regions), function(i) {
+    cat("Checking region", i, "of", length(dat$regions), "\n")
+    if (solve_region(dat$shapes, dat$regions[[i]])) 1 else 0
   }))
 }
 
