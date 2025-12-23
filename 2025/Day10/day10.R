@@ -104,17 +104,71 @@ read_lines <- function(path) {
 
 # Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  lapply(raw_lines, function(line) {
+    # Extract [.##.] pattern
+    target_match <- regmatches(line, regexpr("\\[[.#]+\\]", line))
+    # Remove brackets more reliably
+    target_str <- substr(target_match, 2, nchar(target_match) - 1)
+    target <- as.integer(strsplit(target_str, "")[[1]] == "#")
+    
+    # Extract all (x,y,z) button patterns
+    button_matches <- gregexpr("\\([0-9,]+\\)", line)
+    button_strs <- regmatches(line, button_matches)[[1]]
+    
+    buttons <- lapply(button_strs, function(b) {
+      nums <- gsub("[()]", "", b)
+      as.integer(strsplit(nums, ",")[[1]]) + 1  # Convert to 1-indexed
+    })
+    
+    list(target = target, buttons = buttons, n_lights = length(target))
+  })
+}
+
+solve_machine <- function(machine) {
+  n_lights <- machine$n_lights
+  target <- machine$target
+  buttons <- machine$buttons
+  n_buttons <- length(buttons)
+  
+  # Edge case: no buttons
+  if (n_buttons == 0) {
+    if (all(target == 0)) return(0) else return(Inf)
+  }
+  
+  min_presses <- Inf
+  
+  # Try all combinations of button presses (2^n_buttons)
+  for (mask in 0:(2^n_buttons - 1)) {
+    state <- rep(0L, n_lights)
+    presses <- 0
+    
+    for (b in seq_len(n_buttons)) {  # seq_len is safer than 1:n
+      if (bitwAnd(mask, bitwShiftL(1L, b - 1)) > 0) {
+        presses <- presses + 1
+        for (light in buttons[[b]]) {
+          if (light >= 1 && light <= n_lights) {
+            state[light] <- 1L - state[light]
+          }
+        }
+      }
+    }
+    
+    if (all(state == target)) {
+      min_presses <- min(min_presses, presses)
+    }
+  }
+  
+  min_presses
 }
 
 #------------------------------------------------------------------------------
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+solve_part1 <- function(machines) {
+  results <- sapply(machines, solve_machine)
+  cat("Individual machine results:", results, "\n")  # Debug output
+  sum(results)
 }
 
 solve_part2 <- function(dat) {
@@ -126,14 +180,19 @@ solve_part2 <- function(dat) {
 # Quick checks / examples
 #------------------------------------------------------------------------------
 
+# Debugging!!
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day10", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day10", "example.txt"))
+  cat("Raw lines:\n")
+  print(example_raw)
+  
+  example_dat <- parse_input(example_raw)
+  cat("\nParsed machines:\n")
+  print(example_dat)
+  
+  stopifnot(
+    solve_part1(example_dat) == 7
+  )
   invisible(TRUE)
 }
 

@@ -104,8 +104,136 @@ read_lines <- function(path) {
 
 # Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  shapes <- list()
+  regions <- list()
+  
+  i <- 1
+  # Parse shapes
+  while (i <= length(raw_lines) && grepl("^\\d+:$", raw_lines[i])) {
+    shape_id <- as.integer(gsub(":", "", raw_lines[i]))
+    i <- i + 1
+    shape_rows <- c()
+    while (i <= length(raw_lines) && grepl("^[#.]+$", raw_lines[i])) {
+      shape_rows <- c(shape_rows, raw_lines[i])
+      i <- i + 1
+    }
+    # Convert to matrix of coordinates
+    shapes[[shape_id + 1]] <- parse_shape(shape_rows)
+    while (i <= length(raw_lines) && raw_lines[i] == "") i <- i + 1
+  }
+  
+  # Parse regions
+  while (i <= length(raw_lines)) {
+    if (raw_lines[i] != "") {
+      parts <- strsplit(raw_lines[i], ": ")[[1]]
+      dims <- as.integer(strsplit(parts[1], "x")[[1]])
+      counts <- as.integer(strsplit(parts[2], " ")[[1]])
+      regions[[length(regions) + 1]] <- list(
+        width = dims[1], height = dims[2], counts = counts
+      )
+    }
+    i <- i + 1
+  }
+  
+  list(shapes = shapes, regions = regions)
+}
+
+parse_shape <- function(rows) {
+  coords <- c()
+  for (r in seq_along(rows)) {
+    chars <- strsplit(rows[r], "")[[1]]
+    for (c in seq_along(chars)) {
+      if (chars[c] == "#") {
+        coords <- rbind(coords, c(r - 1, c - 1))
+      }
+    }
+  }
+  # Normalize to origin
+  coords[,1] <- coords[,1] - min(coords[,1])
+  coords[,2] <- coords[,2] - min(coords[,2])
+  coords
+}
+
+get_rotations_flips <- function(shape) {
+  orientations <- list()
+  s <- shape
+  for (flip in 1:2) {
+    for (rot in 1:4) {
+      # Normalize
+      s[,1] <- s[,1] - min(s[,1])
+      s[,2] <- s[,2] - min(s[,2])
+      # Add unique orientation
+      key <- paste(s[order(s[,1], s[,2]),], collapse = ",")
+      if (!key %in% names(orientations)) {
+        orientations[[key]] <- s
+      }
+      # Rotate 90 degrees: (r,c) -> (c, -r)
+      s <- cbind(s[,2], -s[,1])
+    }
+    # Flip: (r,c) -> (r, -c)
+    s <- cbind(shape[,1], -shape[,2])
+  }
+  orientations
+}
+
+can_place <- function(grid, shape, start_r, start_c) {
+  for (i in 1:nrow(shape)) {
+    r <- start_r + shape[i, 1]
+    c <- start_c + shape[i, 2]
+    if (r < 1 || r > nrow(grid) || c < 1 || c > ncol(grid)) return(FALSE)
+    if (grid[r, c] != 0) return(FALSE)
+  }
+  TRUE
+}
+
+place_shape <- function(grid, shape, start_r, start_c, id) {
+  for (i in 1:nrow(shape)) {
+    r <- start_r + shape[i, 1]
+    c <- start_c + shape[i, 2]
+    grid[r, c] <- id
+  }
+  grid
+}
+
+solve_region <- function(shapes, region) {
+  width <- region$width
+  height <- region$height
+  counts <- region$counts
+  
+  # Build list of pieces to place
+  pieces <- list()
+  for (shape_idx in seq_along(counts)) {
+    for (k in seq_len(counts[shape_idx])) {
+      pieces[[length(pieces) + 1]] <- shapes[[shape_idx]]
+    }
+  }
+  
+  if (length(pieces) == 0) return(TRUE)
+  
+  grid <- matrix(0, nrow = height, ncol = width)
+  
+  # Backtracking
+  solve_backtrack <- function(piece_idx) {
+    if (piece_idx > length(pieces)) return(TRUE)
+    
+    shape <- pieces[[piece_idx]]
+    orientations <- get_rotations_flips(shape)
+    
+    for (orient in orientations) {
+      for (r in 1:height) {
+        for (c in 1:width) {
+          if (can_place(grid, orient, r, c)) {
+            grid <<- place_shape(grid, orient, r, c, piece_idx)
+            if (solve_backtrack(piece_idx + 1)) return(TRUE)
+            grid <<- place_shape(grid, orient, r, c, 0)  # Undo
+          }
+        }
+      }
+    }
+    FALSE
+  }
+  
+  solve_backtrack(1)
 }
 
 #------------------------------------------------------------------------------
@@ -113,8 +241,9 @@ parse_input <- function(raw_lines) {
 #------------------------------------------------------------------------------
 
 solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+  sum(sapply(dat$regions, function(region) {
+    if (solve_region(dat$shapes, region)) 1 else 0
+  }))
 }
 
 solve_part2 <- function(dat) {
@@ -127,13 +256,13 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day12", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day12", "example.txt"))
+  example_dat <- parse_input(example_raw)
+
+  stopifnot(
+    solve_part1(example_dat) == 2
+    # solve_part2(example_dat) == <expected2>
+  )
   invisible(TRUE)
 }
 

@@ -143,7 +143,8 @@ run_checks <- function() {
   example_dat <- parse_input(example_raw)
 
   stopifnot(
-    solve_part1(example_dat) == 50
+    solve_part1(example_dat) == 50,
+    solve_part2(example_dat) == 24
   )
   invisible(TRUE)
 }

@@ -39,10 +39,6 @@ required_pkgs <- c(
   "dplyr",
   "purrr",
   "tibble"
-  # "ggplot2",
-  # "data.table",
-  # "janitor",
-  # "glue"
 )
 
 missing_pkgs <- setdiff(required_pkgs, rownames(installed.packages()))
@@ -104,17 +100,38 @@ read_lines <- function(path) {
 
 # Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  graph <- list()
+  for (line in raw_lines) {
+    parts <- strsplit(line, ": ")[[1]]
+    node <- parts[1]
+    neighbors <- strsplit(parts[2], " ")[[1]]
+    graph[[node]] <- neighbors
+  }
+  graph
 }
 
 #------------------------------------------------------------------------------
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+solve_part1 <- function(graph) {
+  memo <- new.env(hash = TRUE)
+  
+  count_paths <- function(node) {
+    if (node == "out") return(1)
+    if (!is.null(graph[[node]]) && exists(node, envir = memo)) {
+      return(get(node, envir = memo))
+    }
+    
+    neighbors <- graph[[node]]
+    if (is.null(neighbors)) return(0)
+    
+    total <- sum(sapply(neighbors, count_paths))
+    assign(node, total, envir = memo)
+    total
+  }
+  
+  count_paths("you")
 }
 
 solve_part2 <- function(dat) {
@@ -127,13 +144,13 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day11", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day11", "example.txt"))
+  example_dat <- parse_input(example_raw)
+
+  stopifnot(
+    solve_part1(example_dat) == 5
+    # solve_part2(example_dat) == <expected2>
+  )
   invisible(TRUE)
 }
 
