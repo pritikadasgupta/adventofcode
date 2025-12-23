@@ -39,10 +39,6 @@ required_pkgs <- c(
   "dplyr",
   "purrr",
   "tibble"
-  # "ggplot2",
-  # "data.table",
-  # "janitor",
-  # "glue"
 )
 
 missing_pkgs <- setdiff(required_pkgs, rownames(installed.packages()))
@@ -104,17 +100,33 @@ read_lines <- function(path) {
 
 # Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  coords <- do.call(rbind, lapply(raw_lines, function(line) {
+    as.numeric(strsplit(line, ",")[[1]])
+  }))
+  colnames(coords) <- c("x", "y")
+  coords
 }
 
 #------------------------------------------------------------------------------
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+solve_part1 <- function(coords) {
+  n <- nrow(coords)
+  max_area <- 0
+  
+  # Check all pairs of red tiles as opposite corners
+  end
+  for (i in 1:(n-1)) {
+    for (j in (i+1):n) {
+      width <- abs(coords[j, "x"] - coords[i, "x"])
+      height <- abs(coords[j, "y"] - coords[i, "y"])
+      area <- width * height
+      max_area <- max(max_area, area)
+    }
+  }
+  
+  max_area
 }
 
 solve_part2 <- function(dat) {
@@ -127,13 +139,12 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day9", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day9", "example.txt"))
+  example_dat <- parse_input(example_raw)
+
+  stopifnot(
+    solve_part1(example_dat) == 50
+  )
   invisible(TRUE)
 }
 
