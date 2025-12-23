@@ -5,7 +5,7 @@
 # Project:   Advent of Code (AoC) 2025
 # Author:    GRID
 # Created:   12-01-2025 (MM-DD-YYYY)
-# Purpose:   Solve AoC 2025 Day 8 – <puzzle title>
+# Purpose:   Solve AoC 2025 Day 8 – Playground
 # Link:      https://adventofcode.com/2025/day/8
 #
 # Usage (CLI, from repo root):
