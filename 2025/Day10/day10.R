@@ -171,9 +171,103 @@ solve_part1 <- function(machines) {
   sum(results)
 }
 
-solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+parse_input <- function(raw_lines) {
+  lapply(raw_lines, function(line) {
+    # Extract [.##.] pattern (for part 1)
+    target_match <- regmatches(line, regexpr("\\[[.#]+\\]", line))
+    target_str <- substr(target_match, 2, nchar(target_match) - 1)
+    target <- as.integer(strsplit(target_str, "")[[1]] == "#")
+    
+    # Extract all (x,y,z) button patterns
+    button_matches <- gregexpr("\\([0-9,]+\\)", line)
+    button_strs <- regmatches(line, button_matches)[[1]]
+    
+    buttons <- lapply(button_strs, function(b) {
+      nums <- gsub("[()]", "", b)
+      as.integer(strsplit(nums, ",")[[1]]) + 1 # Convert to 1-indexed
+    })
+    
+    # Extract {x,y,z} joltage requirements (for part 2)
+    joltage_match <- regmatches(line, regexpr("\\{[0-9,]+\\}", line))
+    joltage_str <- gsub("[{}]", "", joltage_match)
+    joltage <- as.integer(strsplit(joltage_str, ",")[[1]])
+    
+    list(target = target, buttons = buttons, n_lights = length(target),
+         joltage = joltage, n_counters = length(joltage))
+  })
+}
+
+solve_machine_part2 <- function(machine) {
+  joltage <- machine$joltage
+  buttons <- machine$buttons
+  n_counters <- machine$n_counters
+  n_buttons <- length(buttons)
+  
+  # Build coefficient matrix: each column is a button, each row is a counter
+  # A[i,j] = 1 if button j affects counter i, else 0
+  A <- matrix(0, nrow = n_counters, ncol = n_buttons)
+  for (j in seq_len(n_buttons)) {
+    for (counter in buttons[[j]]) {
+      if (counter <= n_counters) {
+        A[counter, j] <- 1
+      }
+    }
+  }
+  
+  # We need to solve: A %*% x = joltage, where x >= 0 integers
+  # Minimize sum(x)
+  
+  # Use brute force with upper bound on each button press
+  # Upper bound: max(joltage) since pressing more than that is wasteful
+  max_presses <- max(joltage)
+  
+  min_total <- Inf
+  
+  # Recursive search with pruning
+  solve_recursive <- function(button_idx, current_state, current_presses) {
+    if (current_presses >= min_total) return() # Pruning
+    
+    if (button_idx > n_buttons)
+      if (all(current_state == joltage)) {
+        min_total <<- current_presses
+      }
+    return()
+  }
+  
+  # How much more do we need for each counter?
+  remaining <- joltage - current_state
+  if (any(remaining < 0)) return() # Overshot
+  
+  # Try different number of presses for this button
+  button_effect <- A[, button_idx]
+  
+  # Max useful presses for this button
+  if (sum(button_effect) > 0) {
+    max_for_button <- max(ceiling(remaining / pmax(button_effect, 0.001)))
+    max_for_button <- min(max_for_button, max_presses)
+  } else {
+    max_for_button <- 0
+  }
+  
+  for (presses in 0:max_for_button) {
+    new_state <- current_state + presses * button_effect
+    if (all(new_state <= joltage)) { # Don't overshoot
+      solve_recursive(button_idx + 1, new_state, current_presses + presses)
+    }
+  }
+}
+
+solve_recursive(1, rep(0, n_counters), 0)
+
+if (is.infinite(min_total)) {
+  warning("No solution found for machine")
+  return(NA)
+}
+min_total
+}
+
+solve_part2 <- function(machines) {
+  sum(sapply(machines, solve_machine_part2))
 }
 
 #------------------------------------------------------------------------------

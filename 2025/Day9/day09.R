@@ -132,37 +132,7 @@ solve_part1 <- function(coords) {
 solve_part2 <- function(coords) {
   n <- nrow(coords)
   
-  # Build set of all red and green tiles
-  red_green <- matrix(FALSE, nrow = max(coords[,"y"]) + 1, ncol = max(coords[,"x"]) + 1)
-  
-  # Mark red tiles
-  for (i in 1:n) {
-    red_green[coords[i, "y"], coords[i, "x"]] <- TRUE
-  }
-  
-  # Mark green tiles along edges between consecutive red tiles (list wraps)
-  for (i in 1:n) {
-    next_i <- if (i == n) 1 else i + 1
-    x1 <- coords[i, "x"]; y1 <- coords[i, "y"]
-    x2 <- coords[next_i, "x"]; y2 <- coords[next_i, "y"]
-    
-    # Draw line between them
-    if (x1 == x2) {
-      # Vertical line
-      for (y in min(y1, y2):max(y1, y2)) {
-        red_green[y, x1] <- TRUE
-      }
-    } else {
-      # Horizontal line
-      for (x in min(x1, x2):max(x1, x2)) {
-        red_green[y1, x] <- TRUE
-      }
-    }
-  }
-  
-  # Flood fill interior using ray casting or scanline
-  # For each cell, count crossings to determine if inside polygon
-  # Build polygon edges for ray casting
+  # Build polygon edges (connecting consecutive red tiles)
   edges <- list()
   for (i in 1:n) {
     next_i <- if (i == n) 1 else i + 1
@@ -172,16 +142,65 @@ solve_part2 <- function(coords) {
     )
   }
   
-  # Check each cell if it's inside the polygon
-  for (y in 1:nrow(red_green)) {
-    for (x in 1:ncol(red_green)) {
-      if (!red_green[y, x] && point_in_polygon(x - 0.5, y - 0.5, edges)) {
-        red_green[y, x] <- TRUE
+  # Get all unique y-values and sort them
+  all_y <- sort(unique(c(coords[, "y"], sapply(edges, function(e) c(e$y1, e$y2)))))
+  
+  # For each horizontal slab between consecutive y-values, compute valid x-intervals
+  # Use scanline: track which vertical edges are "active"
+  
+  # Precompute valid x-ranges for each y-coordinate using ray casting
+  # But only for y-values we care about (unique y's from coords)
+  
+  get_x_range_at_y <- function(y) {
+    # Find all x-coordinates where the polygon boundary intersects this y
+    x_intersections <- c()
+    
+    for (edge in edges) {
+      y1 <- edge$y1; y2 <- edge$y2
+      x1 <- edge$x1; x2 <- edge$x2
+      
+      if (y1 == y2) {
+        # Horizontal edge at this y
+        if (y1 == y) {
+          x_intersections <- c(x_intersections, min(x1, x2), max(x1, x2))
+        }
+      } else {
+        # Vertical edge - check if y is in range
+        if (y >= min(y1, y2) && y <= max(y1, y2)) {
+          x_intersections <- c(x_intersections, x1)  # x1 == x2 for vertical
+        }
       }
     }
+    
+    if (length(x_intersections) == 0) return(NULL)
+    
+    # For rectilinear polygon, the valid range at this y is between boundary points
+    x_intersections <- sort(unique(x_intersections))
+    
+    # Return the full range covered by polygon at this y
+    list(min_x = min(x_intersections), max_x = max(x_intersections))
   }
   
-  # Now find largest rectangle with red corners where all tiles are red/green
+  # Check if a rectangle is entirely within the polygon
+  rect_in_polygon <- function(rx1, ry1, rx2, ry2) {
+    min_x <- min(rx1, rx2); max_x <- max(rx1, rx2)
+    min_y <- min(ry1, ry2); max_y <- max(ry1, ry2)
+    
+    # Get all y-values we need to check (polygon vertices in range + rectangle bounds)
+    check_ys <- unique(c(min_y, max_y, all_y[all_y >= min_y & all_y <= max_y]))
+    
+    for (y in check_ys) {
+      range_at_y <- get_x_range_at_y(y)
+      if (is.null(range_at_y)) return(FALSE)
+      if (min_x < range_at_y$min_x || max_x > range_at_y$max_x) {
+        return(FALSE)
+      }
+    }
+    
+    TRUE
+  }
+  
+  # Find largest valid rectangle
   max_area <- 0
   
   for (i in 1:(n-1)) {
@@ -189,52 +208,21 @@ solve_part2 <- function(coords) {
       x1 <- coords[i, "x"]; y1 <- coords[i, "y"]
       x2 <- coords[j, "x"]; y2 <- coords[j, "y"]
       
-      # Check if all tiles in rectangle are red/green
-      min_x <- min(x1, x2); max_x <- max(x1, x2)
-      min_y <- min(y1, y2); max_y <- max(y1, y2)
+      # Quick area check - skip if can't beat current best
+      width <- abs(x2 - x1) + 1
+      height <- abs(y2 - y1) + 1
+      area <- width * height
       
-      all_valid <- TRUE
-      for (y in min_y:max_y) {
-        for (x in min_x:max_x) {
-          if (!red_green[y, x]) {
-            all_valid <- FALSE
-            break
-          }
-        }
-        if (!all_valid) break
-      }
+      if (area <= max_area) next
       
-      if (all_valid) {
-        width <- max_x - min_x + 1
-        height <- max_y - min_y + 1
-        area <- width * height
-        max_area <- max(max_area, area)
+      # Check if rectangle is valid
+      if (rect_in_polygon(x1, y1, x2, y2)) {
+        max_area <- area
       }
     }
   }
   
   max_area
-}
-
-# Ray casting algorithm to check if point is inside polygon
-point_in_polygon <- function(px, py, edges) {
-  crossings <- 0
-  
-  for (edge in edges) {
-    x1 <- edge$x1; y1 <- edge$y1
-    x2 <- edge$x2; y2 <- edge$y2
-    
-    # Check if horizontal ray from (px, py) going right crosses this edge
-    if ((y1 > py) != (y2 > py)) {
-      # Edge crosses the horizontal line at py
-      x_intersect <- x1 + (py - y1) / (y2 - y1) * (x2 - x1)
-      if (px < x_intersect) {
-        crossings <- crossings + 1
-      }
-    }
-  }
-  
-  (crossings %% 2) == 1
 }
 
 #------------------------------------------------------------------------------
