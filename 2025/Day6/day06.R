@@ -99,45 +99,43 @@ read_lines <- function(path) {
 #------------------------------------------------------------------------------
 
 parse_input <- function(raw_lines) {
-  # Convert to character matrix - each character in its own column
+  # changed "parse_input" for the purposes of Part 2 (and updated Part 1)
   char_matrix <- do.call(rbind, strsplit(raw_lines, ""))
-  
   nrows <- nrow(char_matrix)
   ncols <- ncol(char_matrix)
   
-  # Find separator columns (all spaces)
-  is_separator <- sapply(1:ncols, function(j) {
-    all(char_matrix[, j] == " ")
-  })
+  is_separator <- sapply(1:ncols, function(j) all(char_matrix[, j] == " "))
   
-  # Group consecutive non-separator columns into problems
-  problems <- list()
+  problem_col_groups <- list()
   problem_cols <- c()
   
   for (j in 1:ncols) {
     if (is_separator[j]) {
       if (length(problem_cols) > 0) {
-        problems <- c(problems, list(problem_cols))
+        problem_col_groups <- c(problem_col_groups, list(problem_cols))
         problem_cols <- c()
       }
     } else {
       problem_cols <- c(problem_cols, j)
     }
   }
-  # Don't forget abt the last problem if file doesn't end with separator
   if (length(problem_cols) > 0) {
-    problems <- c(problems, list(problem_cols))
+    problem_col_groups <- c(problem_col_groups, list(problem_cols))
   }
   
-  # Extract numbers and operator for each problem
-  parsed <- lapply(problems, function(cols) {
+  list(char_matrix = char_matrix, problem_cols = problem_col_groups)
+}
+
+solve_part1 <- function(dat) {
+  char_matrix <- dat$char_matrix
+  problem_col_groups <- dat$problem_cols
+  nrows <- nrow(char_matrix)
+  
+  results <- sapply(problem_col_groups, function(cols) {
     block <- char_matrix[, cols, drop = FALSE]
-    
-    # Last row has the operator
     op_row <- block[nrows, ]
     operator <- op_row[op_row %in% c("+", "*")][1]
     
-    # Other rows have numbers - combine characters per row and parse
     numbers <- sapply(1:(nrows - 1), function(i) {
       row_chars <- paste0(block[i, ], collapse = "")
       row_chars <- trimws(row_chars)
@@ -146,27 +144,44 @@ parse_input <- function(raw_lines) {
     })
     numbers <- numbers[!is.na(numbers)]
     
-    list(numbers = numbers, operator = operator)
-  })
-  
-  parsed
-}
-
-solve_part1 <- function(dat) {
-  results <- sapply(dat, function(prob) {
-    if (prob$operator == "+") {
-      sum(prob$numbers)
-    } else {
-      prod(prob$numbers)
-    }
+    if (operator == "+") sum(numbers) else prod(numbers)
   })
   
   sum(results)
 }
 
 solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+  # dat contains $char_matrix and $problem_cols from updated parse_input
+  char_matrix <- dat$char_matrix
+  problem_col_groups <- dat$problem_cols
+  nrows <- nrow(char_matrix)
+  
+  results <- sapply(problem_col_groups, function(cols) {
+    block <- char_matrix[, cols, drop = FALSE]
+    
+    # Get operator from last row
+    op_row <- block[nrows, ]
+    operator <- op_row[op_row %in% c("+", "*")][1]
+    
+    # Read columns RIGHT TO LEFT, where each column is a number
+    numbers <- c()
+    for (j in ncol(block):1) {
+      col_chars <- block[1:(nrows - 1), j]  # Exclude operator row
+      digits <- col_chars[col_chars != " "]
+      if (length(digits) > 0 && all(grepl("\\d", digits))) {
+        num <- as.numeric(paste0(digits, collapse = ""))
+        numbers <- c(numbers, num)
+      }
+    }
+    
+    if (operator == "+") {
+      sum(numbers)
+    } else {
+      prod(numbers)
+    }
+  })
+  
+  sum(results)
 }
 
 #------------------------------------------------------------------------------
