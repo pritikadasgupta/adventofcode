@@ -35,21 +35,21 @@ Each puzzle has two parts, earning one ⭐ each. You can see your progress [here
 
 | Year | Stars | Notes |
 |------|-------|-------|
-| 2025 | 16⭐ / 24 | In progress (AoC++) |
-| 2024 | ⬜ / 50 | |
-| 2023 | 2⭐ / 50 | |
-| 2022 | ⬜ / 50 | |
-| 2021 | 50⭐ / 50 | ✅ Complete! |
-| 2020 | 50⭐ / 50 | ✅ Complete! (AoC++) |
-| 2019 | 12⭐ / 50 | |
-| 2018 | ⬜ / 50 | |
-| 2017 | ⬜ / 50 | |
-| 2016 | ⬜ / 50 | |
-| 2015 | 41⭐ / 50 | |
+| 2025 | 19⭐ / 24⭐ | In progress (AoC++) |
+| 2024 | ⬜ / 50⭐ | |
+| 2023 | 2⭐ / 50⭐ | |
+| 2022 | ⬜ / 50⭐ | |
+| 2021 | 50⭐ / 50⭐ | ✅ Complete! |
+| 2020 | 50⭐ / 50⭐ | ✅ Complete! (AoC++) |
+| 2019 | 12⭐ / 50⭐ | |
+| 2018 | ⬜ / 50⭐ | |
+| 2017 | ⬜ / 50⭐ | |
+| 2016 | ⬜ / 50⭐ | |
+| 2015 | 41⭐ / 50⭐ | |
 
 (I will revisit the other years when I have time!)
 
-**Total: 171⭐**
+**Total: 174⭐ / 524⭐**
 
 ## Running the R solutions
 
