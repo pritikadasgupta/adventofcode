@@ -116,11 +116,11 @@ solve_part1 <- function(coords) {
   max_area <- 0
   
   # Check all pairs of red tiles as opposite corners
-  end
   for (i in 1:(n-1)) {
     for (j in (i+1):n) {
-      width <- abs(coords[j, "x"] - coords[i, "x"])
-      height <- abs(coords[j, "y"] - coords[i, "y"])
+      # +1 because rectangle includes both corner tiles
+      width <- abs(coords[j, "x"] - coords[i, "x"]) + 1
+      height <- abs(coords[j, "y"] - coords[i, "y"]) + 1
       area <- width * height
       max_area <- max(max_area, area)
     }
