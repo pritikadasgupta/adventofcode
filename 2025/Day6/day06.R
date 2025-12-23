@@ -5,7 +5,7 @@
 # Project:   Advent of Code (AoC) 2025
 # Author:    GRID
 # Created:   12-01-2025 (MM-DD-YYYY)
-# Purpose:   Solve AoC 2025 Day 6 – <puzzle title>
+# Purpose:   Solve AoC 2025 Day 6 – Trash Compactor
 # Link:      https://adventofcode.com/2025/day/6
 #
 # Usage (CLI, from repo root):
@@ -39,10 +39,6 @@ required_pkgs <- c(
   "dplyr",
   "purrr",
   "tibble"
-  # "ggplot2",
-  # "data.table",
-  # "janitor",
-  # "glue"
 )
 
 missing_pkgs <- setdiff(required_pkgs, rownames(installed.packages()))
@@ -128,7 +124,7 @@ parse_input <- function(raw_lines) {
       problem_cols <- c(problem_cols, j)
     }
   }
-  # Don't forget the last problem if file doesn't end with separator
+  # Don't forget abt the last problem if file doesn't end with separator
   if (length(problem_cols) > 0) {
     problems <- c(problems, list(problem_cols))
   }
@@ -178,13 +174,13 @@ solve_part2 <- function(dat) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  # example_raw <- read_lines(here("2025", "Day6", "example.txt"))
-  # example_dat <- parse_input(example_raw)
-  #
-  # stopifnot(
-  #   solve_part1(example_dat) == <expected1>,
-  #   solve_part2(example_dat) == <expected2>
-  # )
+  example_raw <- read_lines(here("2025", "Day6", "example.txt"))
+  example_dat <- parse_input(example_raw)
+
+  stopifnot(
+    solve_part1(example_dat) == 4277556,
+    solve_part2(example_dat) == 3263827
+  )
   invisible(TRUE)
 }
 
