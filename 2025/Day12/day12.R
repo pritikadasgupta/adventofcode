@@ -240,7 +240,7 @@ solve_region <- function(shapes, region) {
 # Core Logic / Solvers
 #------------------------------------------------------------------------------
 
-solve_part1 <- function(dat) {
+solve_part1 <- function(dat) { #probably very computationally intensive
   sum(sapply(dat$regions, function(region) {
     if (solve_region(dat$shapes, region)) 1 else 0
   }))
