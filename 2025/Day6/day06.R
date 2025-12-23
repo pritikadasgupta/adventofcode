@@ -102,19 +102,70 @@ read_lines <- function(path) {
 # Parsing / Pre-processing
 #------------------------------------------------------------------------------
 
-# Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
-  # one line per record
-  tibble(line = raw_lines)
+  # Convert to character matrix - each character in its own column
+  char_matrix <- do.call(rbind, strsplit(raw_lines, ""))
+  
+  nrows <- nrow(char_matrix)
+  ncols <- ncol(char_matrix)
+  
+  # Find separator columns (all spaces)
+  is_separator <- sapply(1:ncols, function(j) {
+    all(char_matrix[, j] == " ")
+  })
+  
+  # Group consecutive non-separator columns into problems
+  problems <- list()
+  problem_cols <- c()
+  
+  for (j in 1:ncols) {
+    if (is_separator[j]) {
+      if (length(problem_cols) > 0) {
+        problems <- c(problems, list(problem_cols))
+        problem_cols <- c()
+      }
+    } else {
+      problem_cols <- c(problem_cols, j)
+    }
+  }
+  # Don't forget the last problem if file doesn't end with separator
+  if (length(problem_cols) > 0) {
+    problems <- c(problems, list(problem_cols))
+  }
+  
+  # Extract numbers and operator for each problem
+  parsed <- lapply(problems, function(cols) {
+    block <- char_matrix[, cols, drop = FALSE]
+    
+    # Last row has the operator
+    op_row <- block[nrows, ]
+    operator <- op_row[op_row %in% c("+", "*")][1]
+    
+    # Other rows have numbers - combine characters per row and parse
+    numbers <- sapply(1:(nrows - 1), function(i) {
+      row_chars <- paste0(block[i, ], collapse = "")
+      row_chars <- trimws(row_chars)
+      if (row_chars == "" || !grepl("\\d", row_chars)) return(NA_real_)
+      as.numeric(row_chars)
+    })
+    numbers <- numbers[!is.na(numbers)]
+    
+    list(numbers = numbers, operator = operator)
+  })
+  
+  parsed
 }
 
-#------------------------------------------------------------------------------
-# Core Logic / Solvers
-#------------------------------------------------------------------------------
-
 solve_part1 <- function(dat) {
-  # answer for Part 1
-  NA_real_  # replace with actual logic
+  results <- sapply(dat, function(prob) {
+    if (prob$operator == "+") {
+      sum(prob$numbers)
+    } else {
+      prod(prob$numbers)
+    }
+  })
+  
+  sum(results)
 }
 
 solve_part2 <- function(dat) {

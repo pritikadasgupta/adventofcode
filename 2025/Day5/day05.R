@@ -121,9 +121,34 @@ solve_part1 <- function(lines) {
   sum(is_fresh)
 }
 
-solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+solve_part2 <- function(lines) {
+  blank <- which(lines == "")
+  
+  # Parse ranges
+  range_lines <- lines[1:(blank - 1)]
+  ranges <- do.call(rbind, lapply(strsplit(range_lines, "-"), as.numeric))
+  
+  # Sort by start value
+  ranges <- ranges[order(ranges[, 1]), ]
+  
+  # Merge overlapping ranges
+  merged <- list()
+  current <- ranges[1, ]
+  
+  for (i in 2:nrow(ranges)) {
+    if (ranges[i, 1] <= current[2]) {
+      # Overlapping - extend current range
+      current[2] <- max(current[2], ranges[i, 2])
+    } else {
+      # No overlap - save current and start new
+      merged <- c(merged, list(current))
+      current <- ranges[i, ]
+    }
+  }
+  merged <- c(merged, list(current))  # last one!!
+  
+  # count total IDs: sum of (end - start + 1) for each merged range
+  sum(sapply(merged, function(r) r[2] - r[1] + 1))
 }
 
 #------------------------------------------------------------------------------
@@ -135,8 +160,8 @@ run_checks <- function() {
   example_dat <- example_raw
 
   stopifnot(
-    solve_part1(example_dat) == 3
-    # solve_part2(example_dat) == <expected2>
+    solve_part1(example_dat) == 3,
+    solve_part2(example_dat) == 14
   )
   invisible(TRUE)
 }
