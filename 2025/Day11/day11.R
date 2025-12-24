@@ -98,7 +98,6 @@ read_lines <- function(path) {
 # Parsing / Pre-processing
 #------------------------------------------------------------------------------
 
-# Turn raw lines into a structured object (tibble, list, etc.)
 parse_input <- function(raw_lines) {
   graph <- list()
   for (line in raw_lines) {
@@ -119,7 +118,7 @@ solve_part1 <- function(graph) {
   
   count_paths <- function(node) {
     if (node == "out") return(1)
-    if (!is.null(graph[[node]]) && exists(node, envir = memo)) {
+    if (exists(node, envir = memo)) {
       return(get(node, envir = memo))
     }
     
@@ -134,47 +133,28 @@ solve_part1 <- function(graph) {
   count_paths("you")
 }
 
-parse_input <- function(raw_lines) {
-  graph <- list()
-  for (line in raw_lines) {
-    parts <- strsplit(line, ": ")[[1]]
-    node <- parts[1]
-    neighbors <- strsplit(parts[2], " ")[[1]]
-    graph[[node]] <- neighbors
-  }
-  graph
-}
-
 solve_part2 <- function(graph) {
-  # Count paths from "svr" to "out" that visit both "dac" and "fft"
-  
-  # Use memoization with state: (node, visited_dac, visited_fft)
   memo <- new.env(hash = TRUE)
   
   count_paths <- function(node, visited_dac, visited_fft) {
-    # Update visited status
     if (node == "dac") visited_dac <- TRUE
     if (node == "fft") visited_fft <- TRUE
     
-    # Reached destination
     if (node == "out") {
       if (visited_dac && visited_fft) return(1) else return(0)
     }
     
-    # Check memo
     key <- paste(node, visited_dac, visited_fft, sep = "_")
     if (exists(key, envir = memo)) {
       return(get(key, envir = memo))
     }
     
-    # No outgoing edges
     neighbors <- graph[[node]]
     if (is.null(neighbors)) {
       assign(key, 0, envir = memo)
       return(0)
     }
     
-    # Sum paths through all neighbors
     total <- sum(sapply(neighbors, function(n) {
       count_paths(n, visited_dac, visited_fft)
     }))
@@ -191,13 +171,17 @@ solve_part2 <- function(graph) {
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
-  example_raw <- read_lines(here("2025", "Day11", "example.txt"))
-  example_dat <- parse_input(example_raw)
-
-  stopifnot(
-    solve_part1(example_dat) == 5
-    # solve_part2(example_dat) == <expected2>
-  )
+  # Part 1 example (uses "you" -> "out")
+  example1_raw <- read_lines(here("2025", "Day11", "example.txt"))
+  example1_dat <- parse_input(example1_raw)
+  stopifnot(solve_part1(example1_dat) == 5)
+  
+  
+  # Part 2 example (uses "svr" -> "out", different graph!)
+  example2_raw <- read_lines(here("2025", "Day11", "example2.txt"))
+  example2_dat <- parse_input(example2_raw)
+  stopifnot(solve_part2(example2_dat) == 2)
+  
   invisible(TRUE)
 }
 
