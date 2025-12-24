@@ -134,9 +134,56 @@ solve_part1 <- function(graph) {
   count_paths("you")
 }
 
-solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+parse_input <- function(raw_lines) {
+  graph <- list()
+  for (line in raw_lines) {
+    parts <- strsplit(line, ": ")[[1]]
+    node <- parts[1]
+    neighbors <- strsplit(parts[2], " ")[[1]]
+    graph[[node]] <- neighbors
+  }
+  graph
+}
+
+solve_part2 <- function(graph) {
+  # Count paths from "svr" to "out" that visit both "dac" and "fft"
+  
+  # Use memoization with state: (node, visited_dac, visited_fft)
+  memo <- new.env(hash = TRUE)
+  
+  count_paths <- function(node, visited_dac, visited_fft) {
+    # Update visited status
+    if (node == "dac") visited_dac <- TRUE
+    if (node == "fft") visited_fft <- TRUE
+    
+    # Reached destination
+    if (node == "out") {
+      if (visited_dac && visited_fft) return(1) else return(0)
+    }
+    
+    # Check memo
+    key <- paste(node, visited_dac, visited_fft, sep = "_")
+    if (exists(key, envir = memo)) {
+      return(get(key, envir = memo))
+    }
+    
+    # No outgoing edges
+    neighbors <- graph[[node]]
+    if (is.null(neighbors)) {
+      assign(key, 0, envir = memo)
+      return(0)
+    }
+    
+    # Sum paths through all neighbors
+    total <- sum(sapply(neighbors, function(n) {
+      count_paths(n, visited_dac, visited_fft)
+    }))
+    
+    assign(key, total, envir = memo)
+    total
+  }
+  
+  count_paths("svr", FALSE, FALSE)
 }
 
 #------------------------------------------------------------------------------
