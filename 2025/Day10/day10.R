@@ -38,11 +38,8 @@ required_pkgs <- c(
   "stringr",
   "dplyr",
   "purrr",
-  "tibble"
-  # "ggplot2",
-  # "data.table",
-  # "janitor",
-  # "glue"
+  "tibble",
+  "lpSolve"
 )
 
 missing_pkgs <- setdiff(required_pkgs, rownames(installed.packages()))
@@ -178,69 +175,34 @@ solve_machine_part2 <- function(machine) {
   n_buttons <- length(buttons)
   
   # Build coefficient matrix: A[i,j] = 1 if button j affects counter i
-  A <- matrix(0L, nrow = n_counters, ncol = n_buttons)
+  A <- matrix(0, nrow = n_counters, ncol = n_buttons)
   for (j in seq_len(n_buttons)) {
     for (counter in buttons[[j]]) {
       if (counter <= n_counters) {
-        A[counter, j] <- 1L
+        A[counter, j] <- 1
       }
     }
   }
   
-  # Reorder buttons: process buttons that affect fewer counters first (more constrained)
-  button_order <- order(colSums(A))
-  A <- A[, button_order, drop = FALSE]
+  # Solve using Integer Linear Programming
+  # Minimize: sum(x)  (total button presses)
+  # Subject to: A*x = joltage, x >= 0, x integer
   
-  min_total <- Inf
+  result <- lpSolve::lp(
+    direction = "min",
+    objective.in = rep(1, n_buttons),
+    const.mat = A,
+    const.dir = rep("=", n_counters),
+    const.rhs = joltage,
+    all.int = TRUE
+  )
   
-  solve_recursive <- function(button_idx, current_state, current_presses) {
-    # Pruning: cannot beat current best
-    if (current_presses >= min_total) return()
-    
-    # Check for overshoot
-    remaining <- joltage - current_state
-    if (any(remaining < 0)) return()
-    
-    # Base case: all buttons processed
-    if (button_idx > n_buttons) {
-      if (all(remaining == 0)) {
-        min_total <<- current_presses
-      }
-      return()
-    }
-    
-    # Lower bound pruning: estimate minimum additional presses needed
-    # Each remaining unit needs at least one button press somewhere
-    if (current_presses + max(remaining) >= min_total) return()
-    
-    # Effect of pressing this button
-    button_effect <- A[, button_idx]
-    affected <- which(button_effect > 0)
-    
-    if (length(affected) == 0) {
-      # Button does nothing useful, skip it (0 presses)
-      solve_recursive(button_idx + 1, current_state, current_presses)
-      return()
-    }
-    
-    # Tight upper bound: minimum remaining among affected counters
-    max_for_button <- min(remaining[affected])
-    
-    # Try from 0 to max_for_button presses
-    for (presses in 0:max_for_button) {
-      new_state <- current_state + presses * button_effect
-      solve_recursive(button_idx + 1, new_state, current_presses + presses)
-    }
-  }
-  
-  solve_recursive(1, rep(0L, n_counters), 0)
-  
-  if (is.infinite(min_total)) {
+  if (result$status == 0) {
+    return(sum(result$solution))
+  } else {
     warning("No solution found for machine")
     return(NA)
   }
-  
-  min_total
 }
 
 solve_part2 <- function(machines) {
