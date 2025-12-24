@@ -35,7 +35,7 @@ Each puzzle has two parts, earning one ⭐ each. You can see your progress [here
 
 | Year | Stars | Notes |
 |------|-------|-------|
-| 2025 | 19⭐ / 24⭐ | In progress (AoC++) |
+| 2025 | 24⭐ / 24⭐ | ✅ Complete! (AoC++) |
 | 2024 | ⬜ / 50⭐ | |
 | 2023 | 2⭐ / 50⭐ | |
 | 2022 | ⬜ / 50⭐ | |
@@ -49,7 +49,7 @@ Each puzzle has two parts, earning one ⭐ each. You can see your progress [here
 
 (I will revisit the other years when I have time!)
 
-**Total: 174⭐ / 524⭐**
+**Total: 179⭐ / 524⭐**
 
 ## Running the R solutions
 
@@ -74,7 +74,7 @@ main("2025/Day1/input.txt")
 
 Common dependencies include `tidyverse`, `data.table`, `glue`, `here`, and `digest`. New 2025+ R code is going to use only a minimal subset per puzzle, declared at the top of each script.
 
-## The 2025 event
+## The 2025 event (I've completed it!)
 
 The 2025 event starts December 1, 2025 at midnight EST. Puzzles unlock daily through mid-December. (There are only 12 puzzles this year!) I'll be updating this repo as I work through them.
 

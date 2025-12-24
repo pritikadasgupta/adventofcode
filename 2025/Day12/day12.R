@@ -7,13 +7,6 @@
 # Created:   12-01-2025 (MM-DD-YYYY)
 # Purpose:   Solve AoC 2025 Day 12 – Christmas Tree Farm
 # Link:      https://adventofcode.com/2025/day/12
-#
-# Usage (CLI, from repo root):
-#   Rscript 2025/Day12/day12.R 2025/Day12/input.txt
-#
-# Usage (interactive, from repo root):
-#   source("2025/Day12/day12.R")
-#   main("2025/Day12/input.txt")
 ###############################################################################
 
 #------------------------------------------------------------------------------
@@ -39,10 +32,6 @@ required_pkgs <- c(
   "dplyr",
   "purrr",
   "tibble"
-  # "ggplot2",
-  # "data.table",
-  # "janitor",
-  # "glue"
 )
 
 missing_pkgs <- setdiff(required_pkgs, rownames(installed.packages()))
@@ -60,7 +49,6 @@ suppressPackageStartupMessages(
   invisible(lapply(required_pkgs, library, character.only = TRUE))
 )
 
-# Use only when working interactively (RStudio, etc.) and not when you use "Rscript"!!
 if (interactive() && requireNamespace("conflicted", quietly = TRUE)) {
   suppressMessages(
     conflicted::conflicts_prefer(
@@ -72,7 +60,7 @@ if (interactive() && requireNamespace("conflicted", quietly = TRUE)) {
 }
 
 #------------------------------------------------------------------------------
-# Helpers: logging, paths, assertions, I/O
+# Helpers
 #------------------------------------------------------------------------------
 
 log_info <- function(..., .time = TRUE) {
@@ -84,7 +72,6 @@ log_info <- function(..., .time = TRUE) {
   message(msg)
 }
 
-# project-rooted path helper (no {here} dependency)
 here <- function(...) {
   normalizePath(file.path(getwd(), ...), mustWork = FALSE)
 }
@@ -99,46 +86,11 @@ read_lines <- function(path) {
 }
 
 #------------------------------------------------------------------------------
-# Parsing / Pre-processing
+# Parsing
 #------------------------------------------------------------------------------
 
-# Turn raw lines into a structured object (tibble, list, etc.)
-parse_input <- function(raw_lines) {
-  shapes <- list()
-  regions <- list()
-  
-  i <- 1
-  # Parse shapes
-  while (i <= length(raw_lines) && grepl("^\\d+:", raw_lines[i])) {
-    shape_id <- as.integer(gsub(":", "", raw_lines[i]))
-    i <- i + 1
-    shape_rows <- c()
-    while (i <= length(raw_lines) && grepl("^[#.]+$", raw_lines[i])) {
-      shape_rows <- c(shape_rows, raw_lines[i])
-      i <- i + 1
-    }
-    shapes[[shape_id + 1]] <- parse_shape(shape_rows)
-    while (i <= length(raw_lines) && raw_lines[i] == "") i <- i + 1
-  }
-  
-  # Parse regions
-  while (i <= length(raw_lines)) {
-    if (raw_lines[i] != "") {
-      parts <- strsplit(raw_lines[i], ": ")[[1]]
-      dims <- as.integer(strsplit(parts[1], "x")[[1]])
-      counts <- as.integer(strsplit(parts[2], " ")[[1]])
-      regions[[length(regions) + 1]] <- list(
-        width = dims[1], height = dims[2], counts = counts
-      )
-    }
-    i <- i + 1
-  }
-  
-  list(shapes = shapes, regions = regions)
-}
-
 parse_shape <- function(rows) {
-  coords <- c()
+  coords <- NULL
   for (r in seq_along(rows)) {
     chars <- strsplit(rows[r], "")[[1]]
     for (c in seq_along(chars)) {
@@ -147,12 +99,54 @@ parse_shape <- function(rows) {
       }
     }
   }
+  # Normalize to origin
   coords[,1] <- coords[,1] - min(coords[,1])
   coords[,2] <- coords[,2] - min(coords[,2])
   coords
 }
 
-# Precompute all unique orientations for a shape
+parse_input <- function(raw_lines) {
+  shapes <- list()
+  regions <- list()
+  
+  i <- 1
+  
+  # Parse shapes (format: "N:" followed by lines of "#" and ".")
+  while (i <= length(raw_lines) && grepl("^\\d+:$", raw_lines[i])) {
+    shape_id <- as.integer(gsub(":", "", raw_lines[i]))
+    i <- i + 1
+    shape_rows <- c()
+    while (i <= length(raw_lines) && grepl("^[#.]+$", raw_lines[i])) {
+      shape_rows <- c(shape_rows, raw_lines[i])
+      i <- i + 1
+    }
+    shapes[[shape_id + 1]] <- parse_shape(shape_rows)
+    # Skip blank lines
+    while (i <= length(raw_lines) && raw_lines[i] == "") i <- i + 1
+  }
+  
+  # Parse regions (format: "WxH: c0 c1 c2 ...")
+  while (i <= length(raw_lines)) {
+    if (raw_lines[i] != "") {
+      parts <- strsplit(raw_lines[i], ": ")[[1]]
+      dims <- as.integer(strsplit(parts[1], "x")[[1]])
+      counts <- as.integer(strsplit(parts[2], " ")[[1]])
+      regions[[length(regions) + 1]] <- list(
+        width = dims[1], 
+        height = dims[2], 
+        counts = counts
+      )
+    }
+    i <- i + 1
+  }
+  
+  list(shapes = shapes, regions = regions)
+}
+
+#------------------------------------------------------------------------------
+# Shape Orientation and Placement
+#------------------------------------------------------------------------------
+
 get_all_orientations <- function(shape) {
   orientations <- list()
   seen <- character()
@@ -163,7 +157,8 @@ get_all_orientations <- function(shape) {
       # Normalize to origin
       s[,1] <- s[,1] - min(s[,1])
       s[,2] <- s[,2] - min(s[,2])
-      # Sort for consistent key
+      
+      # Create canonical key for deduplication
       ord <- order(s[,1], s[,2])
       s_sorted <- s[ord, , drop = FALSE]
       key <- paste(s_sorted, collapse = ",")
@@ -172,16 +167,17 @@ get_all_orientations <- function(shape) {
         seen <- c(seen, key)
         orientations[[length(orientations) + 1]] <- s_sorted
       }
-      # Rotate 90°: (r,c) -> (c, -r)
+      
+      # Rotate 90° clockwise: (r, c) -> (c, -r)
       s <- cbind(s[,2], -s[,1])
     }
-    # Flip horizontally
+    # Flip horizontally: (r, c) -> (r, -c)
     s <- cbind(shape[,1], -shape[,2])
   }
+  
   orientations
 }
 
-# Precompute valid placements for each orientation at each starting position
 precompute_placements <- function(orientations, height, width) {
   placements <- list()
   
@@ -189,22 +185,26 @@ precompute_placements <- function(orientations, height, width) {
     max_r <- max(orient[,1])
     max_c <- max(orient[,2])
     
+    # Valid starting positions
     for (start_r in 0:(height - 1 - max_r)) {
       for (start_c in 0:(width - 1 - max_c)) {
-        # Convert to grid indices (cells covered)
         cells <- orient
         cells[,1] <- cells[,1] + start_r
         cells[,2] <- cells[,2] + start_c
-        # Convert to single indices for faster lookup
+        # Convert to linear indices for fast grid lookup
         indices <- cells[,1] * width + cells[,2] + 1
         placements[[length(placements) + 1]] <- sort(indices)
       }
     }
   }
   
-  # Remove duplicates
+  # Remove duplicate placements
   unique(placements)
 }
+
+#------------------------------------------------------------------------------
+# Core Solver
+#------------------------------------------------------------------------------
 
 solve_region <- function(shapes, region) {
   width <- region$width
@@ -223,6 +223,7 @@ solve_region <- function(shapes, region) {
       shape_size <- nrow(shapes[[shape_idx]])
       total_shape_cells <- total_shape_cells + counts[shape_idx] * shape_size
       
+      # Add one entry per piece instance
       for (k in seq_len(counts[shape_idx])) {
         pieces[[length(pieces) + 1]] <- list(
           placements = placements,
@@ -232,19 +233,19 @@ solve_region <- function(shapes, region) {
     }
   }
   
+  # No pieces to place
   if (length(pieces) == 0) return(TRUE)
   
-  # Early pruning: if total cells needed > available, impossible
+  # Early pruning: total cells needed exceeds available space
   if (total_shape_cells > total_cells) return(FALSE)
   
-  # Sort pieces by fewest placements first (most constrained)
+  # Sort pieces by constraint level (fewest placements first)
   pieces <- pieces[order(sapply(pieces, function(p) length(p$placements)))]
   
-  # Grid as logical vector for speed
+  # Grid represented as logical vector
   grid <- rep(FALSE, total_cells)
   
-  # Backtracking WITHOUT first-empty-cell heuristic
-  # (shapes don't need to tile perfectly)
+  # Backtracking search
   solve_backtrack <- function(piece_idx) {
     if (piece_idx > length(pieces)) return(TRUE)
     
@@ -259,7 +260,7 @@ solve_region <- function(shapes, region) {
       
       if (solve_backtrack(piece_idx + 1)) return(TRUE)
       
-      # Remove piece
+      # Remove piece (backtrack)
       grid[placement] <<- FALSE
     }
     
@@ -270,54 +271,43 @@ solve_region <- function(shapes, region) {
 }
 
 #------------------------------------------------------------------------------
-# Core Logic / Solvers
+# Part 1 and Part 2 Solvers
 #------------------------------------------------------------------------------
 
 solve_part1 <- function(dat) {
-  sum(sapply(seq_along(dat$regions), function(i) {
-    cat("Checking region", i, "of", length(dat$regions), "\n")
+  results <- sapply(seq_along(dat$regions), function(i) {
     if (solve_region(dat$shapes, dat$regions[[i]])) 1 else 0
-  }))
+  })
+  sum(results)
 }
 
 solve_part2 <- function(dat) {
-  # answer for Part 2
-  NA_real_  # replace with actual logic
+  NA_real_
 }
 
 #------------------------------------------------------------------------------
-# Quick checks / examples
+# Checks and Main
 #------------------------------------------------------------------------------
 
 run_checks <- function() {
   example_raw <- read_lines(here("2025", "Day12", "example.txt"))
   example_dat <- parse_input(example_raw)
-
-  stopifnot(
-    solve_part1(example_dat) == 2
-    # solve_part2(example_dat) == <expected2>
-  )
+  
+  stopifnot(solve_part1(example_dat) == 2)
   invisible(TRUE)
 }
 
-#------------------------------------------------------------------------------
-# Main / Orchestration
-#------------------------------------------------------------------------------
-
-main <- function(
-    input_path = here("2025", "Day12", "input.txt"),
-    verbose = TRUE
-) {
+main <- function(input_path = here("2025", "Day12", "input.txt"), verbose = TRUE) {
   if (verbose) log_info("Reading input from: ", input_path)
   raw <- read_lines(input_path)
   
   if (verbose) log_info("Parsing input...")
   dat <- parse_input(raw)
   
-  if (verbose) log_info("Solving Part 1 …")
+  if (verbose) log_info("Solving Part 1...")
   ans1 <- solve_part1(dat)
   
-  if (verbose) log_info("Solving Part 2 …")
+  if (verbose) log_info("Solving Part 2...")
   ans2 <- solve_part2(dat)
   
   if (verbose) {
@@ -327,10 +317,6 @@ main <- function(
   
   invisible(list(part1 = ans1, part2 = ans2))
 }
-
-#------------------------------------------------------------------------------
-# Script entry point (CLI)
-#------------------------------------------------------------------------------
 
 if (sys.nframe() == 0L) {
   args <- commandArgs(trailingOnly = TRUE)
